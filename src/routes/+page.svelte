@@ -46,11 +46,11 @@
             <h3 class="startMsg">Click the '+' button to add a balloon</h3>
         </div>
 	</div>
-    {#if balloons.length > 0}
-        {#each balloons as balloon}
-            <TelemetrySummary telemetry={balloon}/>
-        {/each}
-    {/if}
+
+    {#each balloons as balloon}
+        <TelemetrySummary telemetry={balloon}/>
+    {/each}
+
 </main>
 
 <style>

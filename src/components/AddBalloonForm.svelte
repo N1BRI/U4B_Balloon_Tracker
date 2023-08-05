@@ -14,20 +14,20 @@
 	let isFormValid = true;
 	let errors = {'callsign' : '', 'slotId' : '', 'formatMask' : ''};
 	
-	const validateBalloon = () => {
-		if (callsign === null || callsign.length === 0){
-			isFormValid = false;
-			errors.callsign = "A valid callsign is required"
-		}
-		if (slotId === null || slotId  < 0 || slotId > 9){
-			isFormValid = false;
-			errors.slotId = "Slot ID must be a number 0 - 9"
-		}
-		if (formatMask === null || formatMask.length != 3){
-			isFormValid = false;
-			errors.formatMask = "A valid callsign is required"
-		}
-	}
+	// const validateBalloon = () => {
+	// 	if (callsign === null || callsign.length === 0){
+	// 		isFormValid = false;
+	// 		errors.callsign = "A valid callsign is required"
+	// 	}
+	// 	if (slotId === null || slotId  < 0 || slotId > 9){
+	// 		isFormValid = false;
+	// 		errors.slotId = "Slot ID must be a number 0 - 9"
+	// 	}
+	// 	if (formatMask === null || formatMask.length != 3){
+	// 		isFormValid = false;
+	// 		errors.formatMask = "A valid callsign is required"
+	// 	}
+	// }
 
 
 	const cancelAddBalloonClicked = () => {
@@ -36,7 +36,6 @@
 		});
 	}
 	const submitAddBalloonClicked = () => {
-		console.log(`${callsign},  ${slotId}, ${formatMask}`);
 		trackedBalloons.update(arr => [...arr, createTelemetry(callsign, slotId, formatMask)]);
 
 		dispatch('submitAddBalloonClicked', {
@@ -53,7 +52,7 @@
 	</div>
 	<div class="input-group vertical">
 		<label for="slotId">Slot ID</label>
-		<input type="number" id="slotId" placeholder="Slot ID" bind:value={slotId} required/>
+		<input type="number" id="slotId" bind:value={slotId} required/>
 	</div>
 	<div class="input-group vertical">
 		<label for="formatMask">Format Mask</label>
