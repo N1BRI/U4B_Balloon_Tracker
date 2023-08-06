@@ -1,4 +1,5 @@
 <script>
+    import {decodeTelemetry} from '../U4B'
 	/**
 	 * @type {import("../models/telmetry").Telemetry}
 	 */
@@ -20,6 +21,7 @@
 		try {
 			if (res.ok) {
 				data = json.data[0];
+                console.log(decodeTelemetry(data))
 				console.log(data);
 				return data;
 			} else {

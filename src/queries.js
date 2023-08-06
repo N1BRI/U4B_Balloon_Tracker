@@ -21,7 +21,7 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
     FROM wspr.rx
     WHERE tx_sign LIKE '${formatMask}'
     and cast(EXTRACT(minute FROM time) as varchar2) like '%${slotId}'
-    and time >= '${lastUpdateString}'
+    and time >= '2023-08-05 15:02:29'
     order by time desc limit 1) tele
     join (select time, DATE_ADD(time, INTERVAL ${slotId} MINUTE) tele_time, tx_loc FROM wspr.rx
     where tx_sign = '${callsign}'
