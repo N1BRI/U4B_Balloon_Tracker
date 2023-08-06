@@ -4,6 +4,7 @@
 	 * @type {import("../models/telmetry").Telemetry}
 	 */
 	export let telemetry;
+    
 	async function getTelemetry() {
 		/**
 		 * @type {import("../models/wsprLiveData").WsprLiveData}
@@ -21,9 +22,16 @@
 		try {
 			if (res.ok) {
 				data = json.data[0];
-                console.log(decodeTelemetry(data))
-				console.log(data);
-				return data;
+                let decodedTelemetry = decodeTelemetry(data);
+                telemetry.telemetryCallsign = data.tx_sign;
+                telemetry.temperature = decodedTelemetry.temperature;
+                telemetry.altitude = decodedTelemetry.altitude;
+                telemetry.battery = decodedTelemetry.battery;
+                telemetry.gpsStatus = decodedTelemetry.gpsStatus;
+                telemetry.gridSquare = data.tx_loc + decodedTelemetry.telemetrySubsquare;
+                telemetry.lastReportedBy = decodedTelemetry.lastReportedBy;
+                telemetry.lastUpdated = decodedTelemetry.lastUpdated
+				return;
 			} else {
 				console.error('Failed to fetch data');
 			}
@@ -31,22 +39,34 @@
 			console.error('Error:', error);
 		}
 	}
+	/**
+	 * @type {Promise<void>}
+	 */
 	let promise = getTelemetry();
+    
 	import { slide } from 'svelte/transition';
 	import { buildTelemetryQuery } from '../queries';
+	import { onDestroy } from 'svelte';
+    const intervalId = setInterval(() => {
+        promise = getTelemetry();
+    }, 20000);
+
+    onDestroy(() =>{
+        clearInterval(intervalId);
+    })
 </script>
 
 <div id="container" out:slide={{ duration: 400 }} in:slide={{ delay: 400, duration: 400 }}>
-	<div id="callsign"><h1>{telemetry.name}</h1></div>
+	<div id="callsign"><h3>{telemetry.name}</h3></div>
 	{#await promise}
 		<div class="spinner tertiary" />
 		<p>...fetching latest telemetry data</p>
-	{:then t}
+	{:then}
 		<mark><i>Last Reported: {telemetry.lastUpdated} by: {telemetry.lastReportedBy}</i></mark>
 		<h5 style="margin-top: 15px;">Callsign: {telemetry.callsign}</h5>
 		<h5>Telemetry Callsign: {telemetry.telemetryCallsign}</h5>
 		<h5>Temperature (C): {telemetry.temperature}</h5>
-		<h5>Battery (V): {t?.power}</h5>
+		<h5>Battery (V): {telemetry.battery}</h5>
 		<h5>Grid Square: {telemetry.gridSquare}</h5>
 		<h5>GPS Status: {telemetry.gpsStatus}</h5>
 		<h5>Satellite Status: {telemetry.satsStatus}</h5>
