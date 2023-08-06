@@ -17,10 +17,10 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
   return  encodeURIComponent(
     `
     SELECT * from
-    (select tx_sign, tx_loc, rx_sign, power, time
+    (select tx_sign, tx_loc as tel_loc, rx_sign, time, power
     FROM wspr.rx
     WHERE tx_sign LIKE '${formatMask}'
-    and cast(EXTRACT(minute FROM time) as varchar2) like '${slotId}'
+    and cast(EXTRACT(minute FROM time) as varchar2) like '%${slotId}'
     and time >= '${lastUpdateString}'
     order by time desc limit 1) tele
     join (select time, DATE_ADD(time, INTERVAL ${slotId} MINUTE) tele_time, tx_loc FROM wspr.rx

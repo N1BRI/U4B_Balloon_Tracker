@@ -11,6 +11,7 @@
 	 */
 	let slotId;
 	let formatMask = '';
+	let name = '';
 	let isFormValid = true;
 	let errors = {'callsign' : '', 'slotId' : '', 'formatMask' : ''};
 	
@@ -36,7 +37,7 @@
 		});
 	}
 	const submitAddBalloonClicked = () => {
-		trackedBalloons.update(arr => [...arr, createTelemetry(callsign, slotId, formatMask)]);
+		trackedBalloons.update(arr => [...arr, createTelemetry(name, callsign, slotId, formatMask)]);
 
 		dispatch('submitAddBalloonClicked', {
 			showModal: false
@@ -47,16 +48,20 @@
 <legend>Enter U4B Balloon Information</legend>
 <form>
 	<div class="input-group vertical">
+		<label for="callsign">Balloon Launch Name</label>
+		<input type="text" id="name" placeholder="Balloon Launch Name" bind:value={name}/>
+	</div>
+	<div class="input-group vertical">
 		<label for="callsign">Callsign</label>
-		<input type="text" id="callsign" placeholder="Callsign" bind:value={callsign} required/>
+		<input type="text" id="callsign" placeholder="Callsign" bind:value={callsign} />
 	</div>
 	<div class="input-group vertical">
 		<label for="slotId">Slot ID</label>
-		<input type="number" id="slotId" bind:value={slotId} required/>
+		<input type="number" id="slotId" bind:value={slotId} />
 	</div>
 	<div class="input-group vertical">
 		<label for="formatMask">Format Mask</label>
-		<input type="text" id="formatMask" placeholder="ex: 1_3%" bind:value={formatMask} required/>
+		<input type="text" id="formatMask" placeholder="ex: 1_3%" bind:value={formatMask} />
 	</div>
 	<div class="input-group vertical">
 		<button on:click={submitAddBalloonClicked}>Start Tracking</button>
