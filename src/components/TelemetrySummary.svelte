@@ -1,10 +1,24 @@
 <script>
-    import {decodeTelemetry} from '../U4B'
+	import { decodeTelemetry } from '../U4B';
+	/**
+	 * @type {string}
+	 */
+	export let telemetryId;
+
 	/**
 	 * @type {import("../models/telmetry").Telemetry}
 	 */
-	export let telemetry;
-    
+	let telemetry;
+	trackedBalloons.subscribe((balloons) => {
+		let match = balloons.find((balloon) => balloon.id == telemetryId);
+		if (match !== undefined) {
+			telemetry = match;
+		} else {
+			console.log('telemetryId mismatch -- something stupid happened');
+		}
+	});
+
+	let dataFound = false;
 	async function getTelemetry() {
 		/**
 		 * @type {import("../models/wsprLiveData").WsprLiveData}
@@ -21,16 +35,32 @@
 
 		try {
 			if (res.ok) {
-				data = json.data[0];
-                let decodedTelemetry = decodeTelemetry(data);
-                telemetry.telemetryCallsign = data.tx_sign;
-                telemetry.temperature = decodedTelemetry.temperature;
-                telemetry.altitude = decodedTelemetry.altitude;
-                telemetry.battery = decodedTelemetry.battery;
-                telemetry.gpsStatus = decodedTelemetry.gpsStatus;
-                telemetry.gridSquare = data.tx_loc + decodedTelemetry.telemetrySubsquare;
-                telemetry.lastReportedBy = decodedTelemetry.lastReportedBy;
-                telemetry.lastUpdated = decodedTelemetry.lastUpdated
+				if (json.data.length > 0) {
+					data = json.data[0];
+					let decodedTelemetry = decodeTelemetry(data);
+					telemetry.telemetryCallsign = data.tx_sign;
+					telemetry.temperature = decodedTelemetry.temperature;
+					telemetry.altitude = decodedTelemetry.altitude;
+					telemetry.battery = decodedTelemetry.battery;
+                    telemetry.speed = decodedTelemetry.speed;
+					telemetry.gpsStatus = decodedTelemetry.gpsStatus;
+                    telemetry.satsStatus = decodedTelemetry.satsStatus;
+					telemetry.gridSquare = data.tx_loc + decodedTelemetry.telemetrySubsquare;
+					telemetry.lastReportedBy = decodedTelemetry.lastReportedBy;
+					telemetry.lastUpdated = decodedTelemetry.lastUpdated;
+                    
+					dataFound = true;
+
+					trackedBalloons.update((balloons) => {
+						const index = balloons.findIndex((balloon) => balloon.id === telemetry.id);
+						if (index !== -1) {
+							balloons[index] = { ...balloons[index], ...telemetry };
+						}
+						return balloons;
+					});
+				} else {
+					dataFound = false;
+				}
 				return;
 			} else {
 				console.error('Failed to fetch data');
@@ -43,48 +73,61 @@
 	 * @type {Promise<void>}
 	 */
 	let promise = getTelemetry();
-    
+
 	import { slide } from 'svelte/transition';
 	import { buildTelemetryQuery } from '../queries';
 	import { onDestroy } from 'svelte';
-    const intervalId = setInterval(() => {
-        promise = getTelemetry();
-    }, 20000);
+	import { trackedBalloons } from '../stores';
+	const intervalId = setInterval(() => {
+		promise = getTelemetry();
+	}, 20000);
 
-    onDestroy(() =>{
-        clearInterval(intervalId);
-    })
+	onDestroy(() => {
+		clearInterval(intervalId);
+	});
 </script>
 
 <div id="container" out:slide={{ duration: 400 }} in:slide={{ delay: 400, duration: 400 }}>
 	<div id="callsign"><h3>{telemetry.name}</h3></div>
 	{#await promise}
-		<div class="spinner tertiary" />
+		<div class="spinner" />
 		<p>...fetching latest telemetry data</p>
 	{:then}
-		<mark><i>Last Reported: {telemetry.lastUpdated} by: {telemetry.lastReportedBy}</i></mark>
-		<h5 style="margin-top: 15px;">Callsign: {telemetry.callsign}</h5>
-		<h5>Telemetry Callsign: {telemetry.telemetryCallsign}</h5>
-		<h5>Temperature (C): {telemetry.temperature}</h5>
-		<h5>Battery (V): {telemetry.battery}</h5>
-		<h5>Grid Square: {telemetry.gridSquare}</h5>
-		<h5>GPS Status: {telemetry.gpsStatus}</h5>
-		<h5>Satellite Status: {telemetry.satsStatus}</h5>
-		<div id="view">
-			<span class="icon-link" />
-		</div>
+		{#if dataFound}
+			<h5 style="margin-top: 15px;">Callsign: {telemetry.callsign}</h5>
+			<h5>Telemetry Callsign: {telemetry.telemetryCallsign}</h5>
+			<h5>Temperature (C): {telemetry.temperature}</h5>
+			<h5>Battery (V): {telemetry.battery}</h5>
+            <h5>Altitude (M): {telemetry.altitude}</h5>
+			<h5>Speed (Knots): {telemetry.speed}</h5>
+			<h5>Grid Square: {telemetry.gridSquare}</h5>
+			<h5>GPS Status: {telemetry.gpsStatus}</h5>
+			<h5>Satellite Status: {telemetry.satsStatus}</h5>
+            <i><mark><small>Last Reported: {telemetry.lastUpdated} by: {telemetry.lastReportedBy}</small></mark></i>
+			<div id="view">
+				<span class="icon-link" />
+			</div>
+		{:else}
+			<p>No data currently availabe for this balloon</p>
+		{/if}
 	{:catch error}
 		<p style="color: red">{error.message}</p>
 	{/await}
 </div>
 
 <style>
-	h1 {
+	h3, i{
+		padding: 10px;
 		margin: 0 0 5px 0;
 	}
+    mark{
+        color: black;
+        background-color: rgb(255, 242, 53);
+    }
 	#view {
 		text-align: end;
 		padding-right: 10px;
+        font-size: 24;
 	}
 	#callsign {
 		background-color: #00abab;
@@ -95,6 +138,7 @@
 		margin-top: 10px;
 		max-width: 300px;
 		min-width: 300px;
+		min-height: 340px;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		border-radius: 6px;
 		background-color: #f5f0f0;

@@ -2,6 +2,7 @@
 /**
  * Represents U4B Telemetry Data.
  * @typedef {Object} Telemetry
+ * @property {string } id - id for this balloon
  * @property {string} name - The balloon launch name
  * @property {string} callsign - The station callsign
  * @property {string | null} telemetryCallsign - The U4B telemetry callsign
@@ -30,6 +31,7 @@
 */
 export function createTelemetry(name, callsign,  slotId, formatMask) {
     return {
+        'id': callsign + slotId + formatMask,
         'name': name,
         'callsign': callsign,
         'telemetryCallsign' : null,

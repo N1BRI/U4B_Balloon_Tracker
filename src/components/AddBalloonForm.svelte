@@ -37,6 +37,7 @@
 		});
 	}
 	const submitAddBalloonClicked = () => {
+		//add validation 
 		trackedBalloons.update(arr => [...arr, createTelemetry(name, callsign, slotId, formatMask)]);
 
 		dispatch('submitAddBalloonClicked', {
