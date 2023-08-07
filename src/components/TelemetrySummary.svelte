@@ -42,13 +42,13 @@
 					telemetry.temperature = decodedTelemetry.temperature;
 					telemetry.altitude = decodedTelemetry.altitude;
 					telemetry.battery = decodedTelemetry.battery;
-                    telemetry.speed = decodedTelemetry.speed;
+					telemetry.speed = decodedTelemetry.speed;
 					telemetry.gpsStatus = decodedTelemetry.gpsStatus;
-                    telemetry.satsStatus = decodedTelemetry.satsStatus;
+					telemetry.satsStatus = decodedTelemetry.satsStatus;
 					telemetry.gridSquare = data.tx_loc + decodedTelemetry.telemetrySubsquare;
 					telemetry.lastReportedBy = decodedTelemetry.lastReportedBy;
 					telemetry.lastUpdated = decodedTelemetry.lastUpdated;
-                    
+
 					dataFound = true;
 
 					trackedBalloons.update((balloons) => {
@@ -90,25 +90,32 @@
 <div id="container" out:slide={{ duration: 400 }} in:slide={{ delay: 400, duration: 400 }}>
 	<div id="callsign"><h3>{telemetry.name}</h3></div>
 	{#await promise}
-		<div class="spinner" />
-		<p>...fetching latest telemetry data</p>
+		<center>
+			<div class="spinner" id="big-spinner"/>
+			<p>...fetching latest telemetry data</p>
+		</center>
 	{:then}
 		{#if dataFound}
 			<h5 style="margin-top: 15px;">Callsign: {telemetry.callsign}</h5>
 			<h5>Telemetry Callsign: {telemetry.telemetryCallsign}</h5>
 			<h5>Temperature (C): {telemetry.temperature}</h5>
 			<h5>Battery (V): {telemetry.battery}</h5>
-            <h5>Altitude (M): {telemetry.altitude}</h5>
+			<h5>Altitude (M): {telemetry.altitude}</h5>
 			<h5>Speed (Knots): {telemetry.speed}</h5>
 			<h5>Grid Square: {telemetry.gridSquare}</h5>
 			<h5>GPS Status: {telemetry.gpsStatus}</h5>
 			<h5>Satellite Status: {telemetry.satsStatus}</h5>
-            <i><mark><small>Last Reported: {telemetry.lastUpdated} by: {telemetry.lastReportedBy}</small></mark></i>
+			<i
+				><mark
+					><small>Last Reported: {telemetry.lastUpdated} by: {telemetry.lastReportedBy}</small
+					></mark
+				></i
+			>
 			<div id="view">
 				<span class="icon-link" />
 			</div>
 		{:else}
-			<p>No data currently availabe for this balloon</p>
+			<p>No data currently available for this balloon</p>
 		{/if}
 	{:catch error}
 		<p style="color: red">{error.message}</p>
@@ -116,18 +123,23 @@
 </div>
 
 <style>
-	h3, i{
+    #big-spinner{
+        height: 3rem;
+        width: 3rem;
+    }
+	h3,
+	i {
 		padding: 10px;
 		margin: 0 0 5px 0;
 	}
-    mark{
-        color: black;
-        background-color: rgb(255, 242, 53);
-    }
+	mark {
+		color: black;
+		background-color: rgb(255, 242, 53);
+	}
 	#view {
 		text-align: end;
 		padding-right: 10px;
-        font-size: 24;
+		font-size: 24;
 	}
 	#callsign {
 		background-color: #00abab;
