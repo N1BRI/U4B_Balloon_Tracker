@@ -16,22 +16,35 @@
 	let errors = { name: '', callsign: '', slotId: '', formatMask: '' };
 
 	const validateBalloon = () => {
+		const formatMaskRegex = /^[0-9]_[0-9]%$/;
 		isFormValid = true;
 		if (name === null || name.length === 0) {
 			isFormValid = false;
 			errors.name = 'Name is required';
 		}
+		else{
+			errors.name = ''
+		}
 		if (callsign === null || callsign.length === 0) {
 			isFormValid = false;
 			errors.callsign = 'A valid callsign is required';
+		}
+		else{
+			errors.callsign = ''
 		}
 		if (slotId === undefined || slotId < 0 || slotId > 9) {
 			isFormValid = false;
 			errors.slotId = 'Slot ID must be a number 0 - 9';
 		}
-		if (formatMask === null || formatMask.length != 4) {
+		else{
+			errors.slotId = ''
+		}
+		if (!formatMaskRegex.test(formatMask)) {
 			isFormValid = false;
 			errors.formatMask = 'please provide a valid format mask ex: 1_3%';
+		}
+		else{
+			errors.formatMask = ''
 		}
 	};
 

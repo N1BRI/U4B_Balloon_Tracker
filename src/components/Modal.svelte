@@ -1,11 +1,11 @@
 <script>
     import { fade, scale } from 'svelte/transition';
     export let showModal = false
-    
+    export let minHeight = '400px';
     </script>
     {#if showModal === true}
     <div class="modal-background" transition:fade>
-        <div class="modal-content-container" transition:scale>
+        <div class="modal-content-container" style="min-height: {minHeight};" transition:scale>
             <slot/>
         </div>
     </div>
