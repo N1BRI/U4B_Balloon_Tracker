@@ -1,10 +1,14 @@
 <script>
 	import { slide } from 'svelte/transition';
 	import { buildTelemetryQuery } from '../queries';
-	import { onDestroy } from 'svelte';
+	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { trackedBalloons } from '../stores';
 	import Modal from './Modal.svelte';
 	import { decodeTelemetry } from '../U4B';
+	
+
+	const dispatch = createEventDispatcher();
+	
 	/**
 	 * @type {string}
 	 */
@@ -14,6 +18,8 @@
 	 * @type {import("../models/telmetry").Telemetry}
 	 */
 	let telemetry;
+
+
 	trackedBalloons.subscribe((balloons) => {
 		let match = balloons.find((balloon) => balloon.id == telemetryId);
 		if (match !== undefined) {
@@ -22,12 +28,16 @@
 			console.log('telemetryId mismatch -- something stupid happened');
 		}
 	});
-	let showModal = false;
-	const openDashbord = () => {
-		showModal = true;
+
+	const handleShowDashboardClicked = () => {
+		dispatch('showDashboardClicked', {
+			showDashboard: true,
+			telemetryId: telemetryId
+		});
 	};
 
 	let dataFound = false;
+
 	async function getTelemetry() {
 		/**
 		 * @type {import("../models/wsprLiveData").WsprLiveData}
@@ -41,8 +51,6 @@
 		)}+FORMAT+JSON`;
 		const res = await fetch(url);
 		const json = await res.json();
-        console.log(json);
-
 		try {
 			if (res.ok) {
 				if (json.data.length > 0) {
@@ -94,9 +102,6 @@
 	});
 </script>
 
-{#if showModal}
-	<Modal minHeight="800px" />
-{/if}
 <div id="container" out:slide={{ duration: 400 }} in:slide={{ delay: 400, duration: 400 }}>
 	<div id="callsign"><h3>{telemetry.name}</h3></div>
 	{#await promise}
@@ -122,7 +127,7 @@
 				>
 			</i>
 			<div id="view">
-				<button class="rounded" on:click={openDashbord}>
+				<button class="rounded" on:click={handleShowDashboardClicked}>
 					<center>
 						<span class="icon-link rounded" />
 					</center>

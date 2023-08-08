@@ -6,6 +6,7 @@
 	import { trackedBalloons } from '../stores';
 
 	let showModal = false;
+	let showDashboard = false;
 
 	/**
 	 * @type {import("../models/telmetry").Telemetry[]}
@@ -29,8 +30,16 @@
 	const handleSubmitAddBalloonClicked = (e) => {
 		showModal = e.detail.showModal;
 	};
-</script>
+	/**
+	 * @param {{ detail: { showDashboard: boolean, telemetryId: string }; }} e
+	 */
+	const handleChildButtonClicked = (e) => {
+		showDashboard = e.detail.showDashboard;
+	}
 
+
+</script>
+<Modal showModal={showDashboard}></Modal>
 <Modal {showModal}>
 	<AddBalloonForm
 		on:cancelAddBalloonClicked={handleCancelAddBalloonClicked}
@@ -51,17 +60,17 @@
 <main class="">
 	{#each balloons as balloon}
 		<div class="telemetry-container">
-			<TelemetrySummary telemetryId={balloon.id} />
+			<TelemetrySummary telemetryId={balloon.id} on:showDashboardClicked={handleChildButtonClicked}/>
 		</div>
 	{/each}
 </main>
 
 <style>
-	.panel-row{
+	.panel-row {
 		display: flex;
 		align-items: center;
 	}
-	.telemetry-container{
+	.telemetry-container {
 		margin: 10px;
 	}
 	main {

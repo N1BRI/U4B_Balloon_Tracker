@@ -1,6 +1,6 @@
 <script>
     import { fade, scale } from 'svelte/transition';
-    export let showModal = false
+    export let showModal = false;
     export let minHeight = '400px';
     </script>
     {#if showModal === true}
