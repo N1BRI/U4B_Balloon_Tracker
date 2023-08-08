@@ -8,7 +8,7 @@ import { format } from 'date-fns';
  */
 export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTime) {
     let lastUpdateString = ''
-    slotId = slotId + 2
+    let telemetrySlotId = slotId === 8 ? 0 : slotId + 2;
     if (lastUpdatedTime === null) {
         lastUpdatedTime = new Date();
     }
@@ -18,21 +18,44 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
     lastUpdateString = format(lastUpdatedTime, 'yyyy-MM-dd HH:mm:ss')
     console.log(lastUpdateString);
     return encodeURIComponent(
-        `
-    SELECT * from
-    (select tx_sign, tx_loc as tel_loc, rx_sign, time, power
-    FROM wspr.rx
-    WHERE tx_sign LIKE '${formatMask}'
-    and cast(EXTRACT(minute FROM time) as varchar2) like '%${slotId}'
-    and time >= '2023-08-05 15:02:29'
-    order by time desc limit 1) tele
-    join (select time, DATE_ADD(time, INTERVAL ${slotId} MINUTE) tele_time, tx_loc FROM wspr.rx
-    where tx_sign = '${callsign}'
-    order by time desc
-    limit 1) st
-    on DATE_FORMAT(tele.time, 'YYYY-MM-DD HH24:MI') = DATE_FORMAT(st.tele_time, 'YYYY-MM-DD HH24:MI')
-    order by time desc
+        `WITH standardWspr AS (
+            SELECT tx_sign, tx_loc, rx_sign, time, DATE_ADD(time, INTERVAL 2 MINUTE) time_tel, power,
+                   ROW_NUMBER() OVER (PARTITION BY time ORDER BY time DESC) AS row_num
+            FROM wspr.rx
+            WHERE tx_sign = '${callsign}'
+            AND CAST(EXTRACT(minute FROM time) AS VARCHAR2) LIKE '${slotId}'
+            AND time >= '2023-08-04 15:02:29'
+        ),
+        telemetryWspr AS (
+            SELECT tx_sign, tx_loc AS tel_loc, rx_sign, time, power,
+                   ROW_NUMBER() OVER (PARTITION BY time ORDER BY time DESC) AS row_num
+            FROM wspr.rx
+            WHERE tx_sign LIKE '${formatMask}'
+            AND CAST(EXTRACT(minute FROM time) AS VARCHAR2) LIKE '${telemetrySlotId}'
+            AND time >= '2023-08-04 15:02:29'
+        )
+        SELECT t1.tx_sign as standard_tx_sign, 
+        t2.tx_sign as telemetry_tx_sign, 
+        t1.tx_loc as standard_tx_loc, 
+        t2.tel_loc AS telemetry_tx_loc, 
+        t1.rx_sign as standard_rx_sign, 
+        t2.rx_sign as telemetry_rx_sign, 
+        t1.time as standard_time,
+        t2.time as telemetry_time, 
+        t1.power as standard_power, 
+        t2.power as telemetry_power
+        FROM (
+            SELECT tx_sign, tx_loc, rx_sign, time, power, time_tel,
+                   ROW_NUMBER() OVER (PARTITION BY time_tel ORDER BY time DESC) AS row_num
+            FROM standardWspr
+        ) AS t1
+        JOIN (
+            SELECT tx_sign, tel_loc, rx_sign, time, power,
+                   ROW_NUMBER() OVER (PARTITION BY time ORDER BY time DESC) AS row_num
+            FROM telemetryWspr
+        ) AS t2
+        ON t1.time_tel = t2.time AND t1.row_num = 1 AND t2.row_num = 1
+        ORDER BY t1.time DESC limit 1
     `
     );
 }
-

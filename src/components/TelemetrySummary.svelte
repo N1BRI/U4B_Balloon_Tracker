@@ -1,4 +1,9 @@
 <script>
+	import { slide } from 'svelte/transition';
+	import { buildTelemetryQuery } from '../queries';
+	import { onDestroy } from 'svelte';
+	import { trackedBalloons } from '../stores';
+	import Modal from './Modal.svelte';
 	import { decodeTelemetry } from '../U4B';
 	/**
 	 * @type {string}
@@ -17,6 +22,10 @@
 			console.log('telemetryId mismatch -- something stupid happened');
 		}
 	});
+	let showModal = false;
+	const openDashbord = () => {
+		showModal = true;
+	};
 
 	let dataFound = false;
 	async function getTelemetry() {
@@ -32,20 +41,22 @@
 		)}+FORMAT+JSON`;
 		const res = await fetch(url);
 		const json = await res.json();
+        console.log(json);
 
 		try {
 			if (res.ok) {
 				if (json.data.length > 0) {
+                    console.log(json.data[0]);
 					data = json.data[0];
 					let decodedTelemetry = decodeTelemetry(data);
-					telemetry.telemetryCallsign = data.tx_sign;
+					telemetry.telemetryCallsign = data.telemetry_tx_sign;
 					telemetry.temperature = decodedTelemetry.temperature;
 					telemetry.altitude = decodedTelemetry.altitude;
 					telemetry.battery = decodedTelemetry.battery;
 					telemetry.speed = decodedTelemetry.speed;
 					telemetry.gpsStatus = decodedTelemetry.gpsStatus;
 					telemetry.satsStatus = decodedTelemetry.satsStatus;
-					telemetry.gridSquare = data.tx_loc + decodedTelemetry.telemetrySubsquare;
+					telemetry.gridSquare = data.standard_tx_loc + decodedTelemetry.telemetrySubsquare;
 					telemetry.lastReportedBy = decodedTelemetry.lastReportedBy;
 					telemetry.lastUpdated = decodedTelemetry.lastUpdated;
 
@@ -74,10 +85,6 @@
 	 */
 	let promise = getTelemetry();
 
-	import { slide } from 'svelte/transition';
-	import { buildTelemetryQuery } from '../queries';
-	import { onDestroy } from 'svelte';
-	import { trackedBalloons } from '../stores';
 	const intervalId = setInterval(() => {
 		promise = getTelemetry();
 	}, 20000);
@@ -87,11 +94,14 @@
 	});
 </script>
 
+{#if showModal}
+	<Modal minHeight="800px" />
+{/if}
 <div id="container" out:slide={{ duration: 400 }} in:slide={{ delay: 400, duration: 400 }}>
 	<div id="callsign"><h3>{telemetry.name}</h3></div>
 	{#await promise}
 		<center>
-			<div class="spinner" id="big-spinner"/>
+			<div class="spinner" id="big-spinner" />
 			<p>...fetching latest telemetry data</p>
 		</center>
 	{:then}
@@ -105,14 +115,18 @@
 			<h5>Grid Square: {telemetry.gridSquare}</h5>
 			<h5>GPS Status: {telemetry.gpsStatus}</h5>
 			<h5>Satellite Status: {telemetry.satsStatus}</h5>
-			<i
-				><mark
+			<i>
+				<mark
 					><small>Last Reported: {telemetry.lastUpdated} by: {telemetry.lastReportedBy}</small
 					></mark
-				></i
-			>
+				>
+			</i>
 			<div id="view">
-				<span class="icon-link" />
+				<button class="rounded" on:click={openDashbord}>
+					<center>
+						<span class="icon-link rounded" />
+					</center>
+				</button>
 			</div>
 		{:else}
 			<p>No data currently available for this balloon</p>
@@ -123,10 +137,21 @@
 </div>
 
 <style>
-    #big-spinner{
-        height: 3rem;
-        width: 3rem;
-    }
+	button {
+		height: 40px;
+		width: 40px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 16px;
+		margin: 5px;
+		padding: 0;
+		border-radius: 70% !important;
+	}
+	#big-spinner {
+		height: 3rem;
+		width: 3rem;
+	}
 	h3,
 	i {
 		padding: 10px;

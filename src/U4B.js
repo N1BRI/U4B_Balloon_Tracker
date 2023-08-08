@@ -42,20 +42,20 @@ const POWERS = {
  */
 export function decodeTelemetry(wsprLiveData) {
 
-    let subSquareAlt = getSubsquareAndAltitude(wsprLiveData.tx_sign)
-    let speedSatsGps = getSpeedGpsSats(wsprLiveData.tel_loc, wsprLiveData.power)
+    let subSquareAlt = getSubsquareAndAltitude(wsprLiveData.telemetry_tx_sign)
+    let speedSatsGps = getSpeedGpsSats(wsprLiveData.telemetry_tx_loc, wsprLiveData.telemetry_power)
     let telemetrySubsquare = subSquareAlt[0] + subSquareAlt[1];
     let altitude = subSquareAlt[2]
     let speed = speedSatsGps[0]
     let gpsStatus = speedSatsGps[1]
     let satsStatus = speedSatsGps[2]
 
-    return createDecodedTelemetry(wsprLiveData.time,
-        getTemperature(wsprLiveData.tel_loc, wsprLiveData.power),
-        getBattery(wsprLiveData.tel_loc, wsprLiveData.power),
+    return createDecodedTelemetry(wsprLiveData.telemetry_time,
+        getTemperature(wsprLiveData.telemetry_tx_loc, wsprLiveData.telemetry_power),
+        getBattery(wsprLiveData.telemetry_tx_loc, wsprLiveData.telemetry_power),
         altitude,
         speed,
-        telemetrySubsquare, gpsStatus, satsStatus, wsprLiveData.rx_sign)
+        telemetrySubsquare, gpsStatus, satsStatus, wsprLiveData.telemetry_rx_sign)
 }
 
 /**

@@ -22,8 +22,6 @@
         }
         .modal-content-container{
             min-width: 340px;
-            max-width: 800px;
-            max-height: 700px;
             background-color: #eee;
             border: 1px solid transparent;
             border-radius: 4px;
