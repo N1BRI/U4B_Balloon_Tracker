@@ -4,6 +4,7 @@
 	import AddBalloonForm from '../components/AddBalloonForm.svelte';
 	import TelemetrySummary from '../components/TelemetrySummary.svelte';
 	import { trackedBalloons } from '../stores';
+	import Dashboard from '../components/Dashboard.svelte';
 
 	let showModal = false;
 	let showDashboard = false;
@@ -39,7 +40,9 @@
 
 
 </script>
-<Modal showModal={showDashboard}></Modal>
+<Modal showModal={showDashboard} height="100%" width="100%">
+	<Dashboard ></Dashboard>
+</Modal>
 <Modal {showModal}>
 	<AddBalloonForm
 		on:cancelAddBalloonClicked={handleCancelAddBalloonClicked}

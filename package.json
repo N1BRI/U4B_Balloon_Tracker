@@ -32,6 +32,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"leaflet": "^1.9.4",
 		"mini.css": "^3.0.1"
 	}
 }

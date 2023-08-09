@@ -99,6 +99,20 @@
 		{/if}
 	</div>
 	<div class="input-group vertical">
+		<label for="telemetryStartDate">Telemetry Start Date</label>
+		<input type="date" id="telemetryStartDate" class="copyMini" />
+		{#if !isFormValid}
+			<small class="error">{errors.formatMask}</small>
+		{/if}
+	</div>
+	<div class="input-group vertical">
+		<label for="telemetryStartTime">Telemetry Start Time</label>
+		<input type="time" class="copyMini" id="telemetryStartTime" />
+		{#if !isFormValid}
+			<small class="error">{errors.formatMask}</small>
+		{/if}
+	</div>
+	<div class="input-group vertical">
 		<button on:click={submitAddBalloonClicked}>Start Tracking</button>
 		<button on:click={cancelAddBalloonClicked}>Cancel</button>
 	</div>
@@ -108,5 +122,18 @@
 	.error{
 		color: red;
 		margin-left: 10px;
+	}
+	.copyMini{
+		box-sizing: border-box;
+    background: var(--input-back-color);
+    color: var(--input-fore-color);
+    border: 0.0625rem solid var(--input-border-color);
+    border-radius: var(--universal-border-radius);
+    margin: calc(var(--universal-margin) / 2);
+    padding: var(--universal-padding) calc(1.5 * var(--universal-padding));
+	}
+	button{
+		background-color: #00abab;
+		color: white;
 	}
 </style>
