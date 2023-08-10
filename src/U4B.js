@@ -44,7 +44,7 @@ export function decodeTelemetry(wsprLiveData) {
 
     let subSquareAlt = getSubsquareAndAltitude(wsprLiveData.telemetry_tx_sign)
     let speedSatsGps = getSpeedGpsSats(wsprLiveData.telemetry_tx_loc, wsprLiveData.telemetry_power)
-    let telemetrySubsquare = subSquareAlt[0] + subSquareAlt[1];
+    let telemetrySubsquare = subSquareAlt[0].toLowerCase() + subSquareAlt[1].toLocaleLowerCase();
     let altitude = subSquareAlt[2]
     let speed = speedSatsGps[0]
     let gpsStatus = speedSatsGps[1]

@@ -1,7 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-	import { trackedBalloons } from '../stores';
-	import { createTelemetry } from '../models/telemetry';
+	import { trackedBalloonsList } from '../stores';
+	import { createHistoricalTelemetry} from '../models/HistoricalTelemetry';
 
 	const dispatch = createEventDispatcher();
 
@@ -10,7 +10,7 @@
 	 * @type {number}
 	 */
 	let slotId;
-	let startDate = new Date().toISOString().slice(0, 10)
+	let startDateString = new Date().toISOString().slice(0, 10)
 	let isActive = true;
 	let formatMask = '';
 	let name = '';
@@ -58,9 +58,9 @@
 	const submitAddBalloonClicked = () => {
 		validateBalloon();
 		if (isFormValid) {
-			trackedBalloons.update((arr) => [
+			trackedBalloonsList.update((arr) => [
 				...arr,
-				createTelemetry(name, callsign, slotId, formatMask)
+				createHistoricalTelemetry(name, callsign, slotId,formatMask, new Date(startDateString), isActive)
 			]);
 
 			dispatch('submitAddBalloonClicked', {
@@ -102,7 +102,7 @@
 	</div>
 	<div class="input-group vertical">
 		<label for="telemetryStartDate">Telemetry Start Date <span class="icon-help"></span></label>
-		<input type="date" id="telemetryStartDate" class="copyMini" bind:value={startDate}/>
+		<input type="date" id="telemetryStartDate" class="copyMini" bind:value={startDateString}/>
 		{#if !isFormValid}
 			<small class="error">{errors.formatMask}</small>
 		{/if}

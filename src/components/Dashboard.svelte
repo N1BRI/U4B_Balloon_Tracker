@@ -1,8 +1,11 @@
 <script>
 	import { onMount, onDestroy, createEventDispatcher } from 'svelte';
 	import { browser } from '$app/environment';
+	import { trackedBalloonsList } from '../stores';
+	import { createTelemetry } from '../models/telemetry';
+	import { maidenheadToLatLng } from '../models/coordinates';
 
-    const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher();
 
 	/**
 	 * @type {HTMLDivElement}
@@ -12,8 +15,25 @@
 	 * @type {{ remove: () => void; }}
 	 */
 	let map;
+    /**
+	 * @type {string}
+	 */
+    export let historicalTelemetryId;
+	/**
+	 * @type {import('../models/HistoricalTelemetry').HistoricalTelemetry}
+	 */
+	 let historicalTelemetry;
+
 
 	onMount(async () => {
+        trackedBalloonsList.subscribe((balloons) => {
+		let match = balloons.find((balloon) => balloon.id === historicalTelemetryId);
+		if (match) {
+			historicalTelemetry = match;
+		} else {
+			console.log('telemetryId mismatch -- something stupid happened');
+		}
+	});
 		if (browser) {
 			const leaflet = await import('leaflet');
 
@@ -29,10 +49,17 @@
 				)
 				.addTo(map);
 
-			leaflet
-				.marker([51.5, -0.09])
-				.addTo(map)
-				.bindPopup('A pretty CSS3 popup.<br> Easily customizable.');
+                /**
+			 * @type {number[][]}
+			 */
+                let balloonTrackPoints = [];
+            historicalTelemetry.telemetrySpots.forEach((record)=>{
+                if(record.gridSquare){
+                    let coords = maidenheadToLatLng(record.gridSquare)
+                    balloonTrackPoints.push([coords.latitude, coords.longitude]);
+                }
+            })
+            leaflet.polyline(balloonTrackPoints).addTo(map);
 		}
 	});
 
@@ -43,31 +70,30 @@
 		}
 	});
 
-    const closeDashboardClick = () => {
+	const closeDashboardClick = () => {
 		dispatch('closeDashboardClick', {
 			showDashboard: false
 		});
 	};
-
 </script>
 
 <main>
-    <button on:click={closeDashboardClick}>x</button>
+	<button on:click={closeDashboardClick}>x</button>
 	<div id="map" bind:this={mapElement} />
 </main>
 
 <style>
 	@import 'leaflet/dist/leaflet.css';
 	main {
-        padding: 10px;
+		padding: 10px;
 	}
 	#map {
 		height: 600px;
-        width: 70%;
+		width: 90%;
 	}
 
-    button{
-        float: right;
+	button {
+		float: right;
 		border-radius: 50%;
 		height: 40px;
 		background-color: #00abab;
@@ -78,10 +104,8 @@
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	}
 
-    :root {
-
-    --button-back-color: none;
-    --button-hover-back-color: none;
-
-}
+	:root {
+		--button-back-color: none;
+		--button-hover-back-color: none;
+	}
 </style>

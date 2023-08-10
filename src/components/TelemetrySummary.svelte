@@ -2,17 +2,16 @@
 	import { slide } from 'svelte/transition';
 	import { buildTelemetryQuery } from '../queries';
 	import { createEventDispatcher, onDestroy } from 'svelte';
-	import { trackedBalloons } from '../stores';
-	import Modal from './Modal.svelte';
+	import { trackedBalloonsList } from '../stores';
 	import { decodeTelemetry } from '../U4B';
-	
+	import { createTelemetry } from '../models/telemetry';
 
 	const dispatch = createEventDispatcher();
-	
+
 	/**
-	 * @type {string}
+	 * @type {import('../models/HistoricalTelemetry').HistoricalTelemetry}
 	 */
-	export let telemetryId;
+	export let historicalTelemetry;
 
 	/**
 	 * @type {import("../models/telemetry").Telemetry}
@@ -20,10 +19,19 @@
 	let telemetry;
 
 
-	trackedBalloons.subscribe((balloons) => {
-		let match = balloons.find((balloon) => balloon.id == telemetryId);
-		if (match !== undefined) {
-			telemetry = match;
+
+	trackedBalloonsList.subscribe((balloons) => {
+		let match = balloons.find((balloon) => balloon.id == historicalTelemetry.id);
+		if (match) {
+			historicalTelemetry = match;
+			if (match.telemetrySpots) {
+				if (match.telemetrySpots.length > 1) {
+					match.telemetrySpots[match.telemetrySpots.length - 1];
+				} else {
+					match.telemetrySpots = [createTelemetry()];
+					telemetry = match.telemetrySpots[match.telemetrySpots.length - 1];
+				}
+			}
 		} else {
 			console.log('telemetryId mismatch -- something stupid happened');
 		}
@@ -32,53 +40,83 @@
 	const handleShowDashboardClicked = () => {
 		dispatch('showDashboardClicked', {
 			showDashboard: true,
-			telemetryId: telemetryId
+			historicalTelemetryId: historicalTelemetry.id
 		});
+		console.log("this is htid" + historicalTelemetry.id)
 	};
 
 	let dataFound = false;
-
+	let historicalQueryRan = false;
 	async function getTelemetry() {
 		/**
 		 * @type {import("../models/wsprLiveData").WsprLiveData}
 		 */
 		let data;
+		/**
+		 * @type {Date | null}
+		*/
+		let updateTime;
+
+		historicalTelemetry.telemetryStartDate.setHours(0, 0, 0, 0);
+		updateTime = historicalTelemetry.telemetryStartDate
+		if(historicalTelemetry.telemetrySpots.length > 0){
+			if(historicalQueryRan){
+				if(historicalTelemetry.telemetrySpots[historicalTelemetry.telemetrySpots.length - 1].lastUpdated !== null){
+					updateTime = historicalTelemetry.telemetrySpots[historicalTelemetry.telemetrySpots.length - 1].lastUpdated;
+				}
+			}
+		}
 		let url = `https://db1.wspr.live/?query=${buildTelemetryQuery(
-			telemetry.callsign,
-			telemetry.slotId,
-			telemetry.formatMask,
-			telemetry.lastUpdated
+			historicalTelemetry.callsign,
+			historicalTelemetry.slotId,
+			historicalTelemetry.formatMask,
+			updateTime,
+			historicalQueryRan
 		)}+FORMAT+JSON`;
 		const res = await fetch(url);
 		const json = await res.json();
 		try {
 			if (res.ok) {
 				if (json.data.length > 0) {
-                    console.log(json.data[0]);
-					data = json.data[0];
-					let decodedTelemetry = decodeTelemetry(data);
-					telemetry.telemetryCallsign = data.telemetry_tx_sign;
-					telemetry.temperature = decodedTelemetry.temperature;
-					telemetry.altitude = decodedTelemetry.altitude;
-					telemetry.battery = decodedTelemetry.battery;
-					telemetry.speed = decodedTelemetry.speed;
-					telemetry.gpsStatus = decodedTelemetry.gpsStatus;
-					telemetry.satsStatus = decodedTelemetry.satsStatus;
-					telemetry.gridSquare = data.standard_tx_loc + decodedTelemetry.telemetrySubsquare;
-					telemetry.lastReportedBy = decodedTelemetry.lastReportedBy;
-					telemetry.lastUpdated = decodedTelemetry.lastUpdated;
+					json.data.forEach((/** @type {import("../models/wsprLiveData").WsprLiveData} */ record) => {
+						let t = createTelemetry();
+						let decodedTelemetry = decodeTelemetry(record);
+						t.telemetryCallsign = record.telemetry_tx_sign;
+						t.temperature = decodedTelemetry.temperature;
+						t.altitude = decodedTelemetry.altitude;
+						t.battery = decodedTelemetry.battery;
+						t.speed = decodedTelemetry.speed;
+						t.gpsStatus = decodedTelemetry.gpsStatus;
+						t.satsStatus = decodedTelemetry.satsStatus;
+						t.gridSquare = record.standard_tx_loc + decodedTelemetry.telemetrySubsquare;
+						t.lastReportedBy = decodedTelemetry.lastReportedBy;
+						t.lastUpdated = decodedTelemetry.lastUpdated;
 
-					dataFound = true;
-
-					trackedBalloons.update((balloons) => {
-						const index = balloons.findIndex((balloon) => balloon.id === telemetry.id);
+						trackedBalloonsList.update((balloons) => {
+						const index = balloons.findIndex((balloon) => balloon.id === historicalTelemetry.id);
 						if (index !== -1) {
-							balloons[index] = { ...balloons[index], ...telemetry };
+							if(!(balloons[index].telemetrySpots.find(r => r.lastUpdated === t.lastUpdated))){
+								balloons[index].telemetrySpots.push(t);
+							}
+							
 						}
 						return balloons;
 					});
+					});
+				
+				
+					historicalQueryRan = true;
+					telemetry = historicalTelemetry.telemetrySpots[historicalTelemetry.telemetrySpots.length - 1];
+					dataFound = true;
+
+				console.log(historicalTelemetry)
 				} else {
-					dataFound = false;
+					if(historicalTelemetry.telemetrySpots.length > 0){
+						telemetry = historicalTelemetry.telemetrySpots[historicalTelemetry.telemetrySpots.length - 1]
+					}
+					else{
+						dataFound = false;
+					}
 				}
 				return;
 			} else {
@@ -93,9 +131,16 @@
 	 */
 	let promise = getTelemetry();
 
-	const intervalId = setInterval(() => {
-		promise = getTelemetry();
-	}, 20000);
+	/**
+	 * @type {string | number | NodeJS.Timer | undefined}
+	 */
+	let intervalId;
+
+	if (historicalTelemetry.balloonIsActive) {
+		intervalId = setInterval(() => {
+			promise = getTelemetry();
+		}, 20000);
+	}
 
 	onDestroy(() => {
 		clearInterval(intervalId);
@@ -103,7 +148,7 @@
 </script>
 
 <div id="container" out:slide={{ duration: 400 }} in:slide={{ delay: 400, duration: 400 }}>
-	<div id="callsign"><h3>{telemetry.name}</h3></div>
+	<div id="callsign"><h3>{historicalTelemetry.name}</h3></div>
 	{#await promise}
 		<center>
 			<div class="spinner" id="big-spinner" />
@@ -111,7 +156,7 @@
 		</center>
 	{:then}
 		{#if dataFound}
-			<h5 style="margin-top: 15px;">Callsign: {telemetry.callsign}</h5>
+			<h5 style="margin-top: 15px;">Callsign: {historicalTelemetry.callsign}</h5>
 			<h5>Telemetry Callsign: {telemetry.telemetryCallsign}</h5>
 			<h5>Temperature (C): {telemetry.temperature}</h5>
 			<h5>Battery (V): {telemetry.battery}</h5>

@@ -3,20 +3,24 @@
 	import Modal from '../components/Modal.svelte';
 	import AddBalloonForm from '../components/AddBalloonForm.svelte';
 	import TelemetrySummary from '../components/TelemetrySummary.svelte';
-	import { trackedBalloons } from '../stores';
+	import { trackedBalloonsList } from '../stores';
 	import Dashboard from '../components/Dashboard.svelte';
 
 	let showModal = false;
 	let showDashboard = false;
 
 	/**
-	 * @type {import("../models/telemetry").Telemetry[]}
+	 * @type {import("../models/HistoricalTelemetry").HistoricalTelemetry[]}
 	 */
 	let balloons;
+	/**
+	 * @type {string}
+	 */
+	let historicalTelemetryId;
 	const showAddBalloonModal = () => {
 		showModal = true;
 	};
-	trackedBalloons.subscribe((value) => {
+	trackedBalloonsList.subscribe((value) => {
 		balloons = value;
 	});
 	/**
@@ -32,13 +36,14 @@
 		showModal = e.detail.showModal;
 	};
 	/**
-	 * @param {{ detail: { showDashboard: boolean, telemetryId: string }; }} e
+	 * @param {{ detail: { showDashboard: boolean, historicalTelemetryId: string }; }} e
 	 */
 	const handleChildButtonClicked = (e) => {
 		showDashboard = e.detail.showDashboard;
+		historicalTelemetryId = e.detail.historicalTelemetryId;
 	}
 	/**
-	 * @param {{ detail: { showDashboard: boolean }; }} e
+	 * @param {{ detail: { showDashboard: boolean, historicalTelemetryId: string }; }} e
 	 */
 	const handleCloseDashboardClick = (e) => {
 		showDashboard = e.detail.showDashboard;
@@ -47,7 +52,7 @@
 
 </script>
 <Modal showModal={showDashboard} height="90%" width="90%">
-	<Dashboard on:closeDashboardClick={handleCloseDashboardClick}></Dashboard>
+	<Dashboard on:closeDashboardClick={handleCloseDashboardClick} historicalTelemetryId={historicalTelemetryId}></Dashboard>
 </Modal>
 <Modal {showModal}>
 	<AddBalloonForm
@@ -69,7 +74,8 @@
 <main class="">
 	{#each balloons as balloon}
 		<div class="telemetry-container">
-			<TelemetrySummary telemetryId={balloon.id} on:showDashboardClicked={handleChildButtonClicked}/>
+			<TelemetrySummary historicalTelemetry={balloon}
+			on:showDashboardClicked={handleChildButtonClicked}/>
 		</div>
 	{/each}
 </main>

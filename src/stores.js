@@ -1,14 +1,8 @@
 import { writable } from 'svelte/store';
 
-/**
- * @typedef {import('svelte/store').Writable<import('./models/telemetry').Telemetry[]>} WritableTelemetryArray
- */
 
-
-/** @type {WritableTelemetryArray} */
-export let trackedBalloons = writable([]);
 
 /**
- * @type {import('svelte/store').Writable<Array<import('./models/telemetry').Telemetry[]>>}
+ * @type {import('svelte/store').Writable<Array<import('./models/HistoricalTelemetry').HistoricalTelemetry>>}
  */
-export let masterTrackedBalloons = writable([]);
+export let trackedBalloonsList = writable([]);

@@ -5,8 +5,9 @@ import { format } from 'date-fns';
  * @param {number} slotId
  * @param {string} formatMask
  * @param {Date | null } lastUpdatedTime
+ * @param {boolean } limitQuery
  */
-export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTime) {
+export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTime, limitQuery = true) {
     let lastUpdateString = ''
     let telemetrySlotId = slotId === 8 ? 0 : slotId + 2;
     if (lastUpdatedTime === null) {
@@ -17,7 +18,7 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
     }
     lastUpdateString = format(lastUpdatedTime, 'yyyy-MM-dd HH:mm:ss')
     console.log(lastUpdateString);
-    return encodeURIComponent(
+    let url = encodeURIComponent(
         `WITH standardWspr AS (
             SELECT tx_sign, tx_loc, rx_sign, time, DATE_ADD(time, INTERVAL 2 MINUTE) time_tel, power,
                    ROW_NUMBER() OVER (PARTITION BY time ORDER BY time DESC) AS row_num
@@ -55,7 +56,11 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
             FROM telemetryWspr
         ) AS t2
         ON t1.time_tel = t2.time AND t1.row_num = 1 AND t2.row_num = 1
-        ORDER BY t1.time DESC limit 1
+        ORDER BY t1.time DESC
     `
     );
+    if(limitQuery){
+        url = url + ' limit 1'
+    }
+    return url
 }

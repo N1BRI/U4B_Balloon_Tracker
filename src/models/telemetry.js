@@ -2,12 +2,7 @@
 /**
  * Represents U4B Telemetry Data.
  * @typedef {Object} Telemetry
- * @property {string } id - id for this balloon
- * @property {string} name - The balloon launch name
- * @property {string} callsign - The station callsign
- * @property {string | null} telemetryCallsign - The U4B telemetry callsign
- * @property {number} slotId - The standard wspr slot id of the U4B board.
- * @property {string} formatMask - the format mask of the U4B board ex: 0_3%
+ * @property {string | null} telemetryCallsign - telemetry callsign
  * @property {Date | null} lastUpdated - time of last update
  * @property {number | null} temperature - The temperature of the U4B board
  * @property {number | null} battery - The battery in volts of the U4B board.
@@ -23,20 +18,11 @@
 
 
 /** 
-* @param {string} name
-* @param {string} callsign
-* @param {number} slotId
-* @param {string} formatMask
 * @returns {Telemetry}  
 */
-export function createTelemetry(name, callsign,  slotId, formatMask) {
+export function createTelemetry() {
     return {
-        'id': callsign + slotId + formatMask,
-        'name': name,
-        'callsign': callsign,
         'telemetryCallsign' : null,
-        'slotId' : slotId,
-        'formatMask': formatMask,
         'lastUpdated': null,
         'temperature': null,
         'telemetryLocation' : null,
