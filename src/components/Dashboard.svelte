@@ -52,24 +52,30 @@
 </script>
 
 <main>
+    <button on:click={closeDashboardClick}>x</button>
 	<div id="map" bind:this={mapElement} />
-    <button on:click={closeDashboardClick}>Close</button>
 </main>
 
 <style>
 	@import 'leaflet/dist/leaflet.css';
 	main {
         padding: 10px;
-		background-color: #eee;
-		z-index: 1;
 	}
 	#map {
 		height: 600px;
+        width: 70%;
 	}
 
     button{
+        float: right;
+		border-radius: 50%;
+		height: 40px;
 		background-color: #00abab;
 		color: white;
+		width: 40px;
+		margin: 1em;
+		border: 1px solid transparent;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	}
 
     :root {

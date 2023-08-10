@@ -46,7 +46,7 @@
 
 
 </script>
-<Modal showModal={showDashboard} height="100%" width="100%">
+<Modal showModal={showDashboard} height="90%" width="90%">
 	<Dashboard on:closeDashboardClick={handleCloseDashboardClick}></Dashboard>
 </Modal>
 <Modal {showModal}>

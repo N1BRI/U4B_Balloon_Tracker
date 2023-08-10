@@ -23,16 +23,16 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
                    ROW_NUMBER() OVER (PARTITION BY time ORDER BY time DESC) AS row_num
             FROM wspr.rx
             WHERE tx_sign = '${callsign}'
-            AND CAST(EXTRACT(minute FROM time) AS VARCHAR2) LIKE '${slotId}'
-            AND time >= '2023-08-04 15:02:29'
+            AND CAST(EXTRACT(minute FROM time) AS VARCHAR2) LIKE '%${slotId}'
+            AND time >= '${lastUpdateString}'
         ),
         telemetryWspr AS (
             SELECT tx_sign, tx_loc AS tel_loc, rx_sign, time, power,
                    ROW_NUMBER() OVER (PARTITION BY time ORDER BY time DESC) AS row_num
             FROM wspr.rx
             WHERE tx_sign LIKE '${formatMask}'
-            AND CAST(EXTRACT(minute FROM time) AS VARCHAR2) LIKE '${telemetrySlotId}'
-            AND time >= '2023-08-04 15:02:29'
+            AND CAST(EXTRACT(minute FROM time) AS VARCHAR2) LIKE '%${telemetrySlotId}'
+            AND time >= '${lastUpdateString}'
         )
         SELECT t1.tx_sign as standard_tx_sign, 
         t2.tx_sign as telemetry_tx_sign, 
