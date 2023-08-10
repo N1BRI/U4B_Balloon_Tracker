@@ -1,7 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	import { trackedBalloons } from '../stores';
-	import { createTelemetry } from '../models/telmetry';
+	import { createTelemetry } from '../models/telemetry';
 
 	const dispatch = createEventDispatcher();
 
@@ -10,6 +10,8 @@
 	 * @type {number}
 	 */
 	let slotId;
+	let startDate = new Date().toISOString().slice(0, 10)
+	let isActive = true;
 	let formatMask = '';
 	let name = '';
 	let isFormValid = true;
@@ -71,46 +73,43 @@
 <legend>Enter U4B Balloon Information</legend>
 <form>
 	<div class="input-group vertical">
-		<label for="callsign">Balloon Launch Name</label>
+		<label for="callsign">Balloon Launch Name <span class="icon-help"></span></label>
 		<input type="text" id="name" placeholder="Balloon Launch Name" bind:value={name} />
 		{#if !isFormValid}
 			<small class="error">{errors.name}</small>
 		{/if}
 	</div>
 	<div class="input-group vertical">
-		<label for="callsign">Callsign</label>
+		<label for="callsign">Callsign <span class="icon-help"></span></label>
 		<input type="text" id="callsign" placeholder="Callsign" bind:value={callsign} />
 		{#if !isFormValid}
 			<small class="error">{errors.callsign}</small>
 		{/if}
 	</div>
 	<div class="input-group vertical">
-		<label for="slotId">Slot ID</label>
+		<label for="slotId">Slot ID <span class="icon-help"></span></label>
 		<input type="number" id="slotId" bind:value={slotId} />
 		{#if !isFormValid}
 			<small class="error">{errors.slotId}</small>
 		{/if}
 	</div>
 	<div class="input-group vertical">
-		<label for="formatMask">Telemetry Callsign Format Mask</label>
+		<label for="formatMask">Telemetry Callsign Format Mask <span class="icon-help"></span></label>
 		<input type="text" id="formatMask" placeholder="ex: 1_3%" bind:value={formatMask} />
 		{#if !isFormValid}
 			<small class="error">{errors.formatMask}</small>
 		{/if}
 	</div>
 	<div class="input-group vertical">
-		<label for="telemetryStartDate">Telemetry Start Date</label>
-		<input type="date" id="telemetryStartDate" class="copyMini" />
+		<label for="telemetryStartDate">Telemetry Start Date <span class="icon-help"></span></label>
+		<input type="date" id="telemetryStartDate" class="copyMini" bind:value={startDate}/>
 		{#if !isFormValid}
 			<small class="error">{errors.formatMask}</small>
 		{/if}
 	</div>
-	<div class="input-group vertical">
-		<label for="telemetryStartTime">Telemetry Start Time</label>
-		<input type="time" class="copyMini" id="telemetryStartTime" />
-		{#if !isFormValid}
-			<small class="error">{errors.formatMask}</small>
-		{/if}
+	<div class="input-group horizontal">
+		<label for="balloonIsActive">Active Balloon <span class="icon-help"></span></label>
+		<input type="checkbox" id="balloonIsActive" bind:checked={isActive} />
 	</div>
 	<div class="input-group vertical">
 		<button on:click={submitAddBalloonClicked}>Start Tracking</button>

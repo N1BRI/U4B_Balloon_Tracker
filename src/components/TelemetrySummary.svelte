@@ -15,7 +15,7 @@
 	export let telemetryId;
 
 	/**
-	 * @type {import("../models/telmetry").Telemetry}
+	 * @type {import("../models/telemetry").Telemetry}
 	 */
 	let telemetry;
 

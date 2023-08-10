@@ -1,6 +1,8 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount, onDestroy, createEventDispatcher } from 'svelte';
 	import { browser } from '$app/environment';
+
+    const dispatch = createEventDispatcher();
 
 	/**
 	 * @type {HTMLDivElement}
@@ -40,20 +42,34 @@
 			map.remove();
 		}
 	});
+
+    const closeDashboardClick = () => {
+		dispatch('closeDashboardClick', {
+			showDashboard: false
+		});
+	};
+
 </script>
 
 <main>
 	<div id="map" bind:this={mapElement} />
+    <button on:click={closeDashboardClick}>Close</button>
 </main>
 
 <style>
 	@import 'leaflet/dist/leaflet.css';
 	main {
-		background-color: azure;
+        padding: 10px;
+		background-color: #eee;
 		z-index: 1;
 	}
 	#map {
 		height: 600px;
+	}
+
+    button{
+		background-color: #00abab;
+		color: white;
 	}
 
     :root {

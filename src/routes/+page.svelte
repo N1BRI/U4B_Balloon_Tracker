@@ -10,7 +10,7 @@
 	let showDashboard = false;
 
 	/**
-	 * @type {import("../models/telmetry").Telemetry[]}
+	 * @type {import("../models/telemetry").Telemetry[]}
 	 */
 	let balloons;
 	const showAddBalloonModal = () => {
@@ -37,11 +37,17 @@
 	const handleChildButtonClicked = (e) => {
 		showDashboard = e.detail.showDashboard;
 	}
+	/**
+	 * @param {{ detail: { showDashboard: boolean }; }} e
+	 */
+	const handleCloseDashboardClick = (e) => {
+		showDashboard = e.detail.showDashboard;
+	}
 
 
 </script>
 <Modal showModal={showDashboard} height="100%" width="100%">
-	<Dashboard ></Dashboard>
+	<Dashboard on:closeDashboardClick={handleCloseDashboardClick}></Dashboard>
 </Modal>
 <Modal {showModal}>
 	<AddBalloonForm
