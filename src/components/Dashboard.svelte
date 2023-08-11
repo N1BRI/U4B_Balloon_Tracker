@@ -2,8 +2,25 @@
 	import { onMount, onDestroy, createEventDispatcher } from 'svelte';
 	import { browser } from '$app/environment';
 	import { trackedBalloonsList } from '../stores';
-	import { createTelemetry } from '../models/telemetry';
 	import { maidenheadToLatLng } from '../models/coordinates';
+	import { Chart, registerables } from 'chart.js';
+
+	Chart.register(...registerables);
+
+	/**
+	 * @type{HTMLCanvasElement}
+	 */
+	let altitudeChart;
+
+	/**
+	 * @type{HTMLCanvasElement}
+	 */
+	 let powerChart;
+	
+	 /**
+	 * @type{HTMLCanvasElement}
+	 */
+	 let speedsChart;
 
 	const dispatch = createEventDispatcher();
 
@@ -15,25 +32,24 @@
 	 * @type {{ remove: () => void; }}
 	 */
 	let map;
-    /**
+	/**
 	 * @type {string}
 	 */
-    export let historicalTelemetryId;
+	export let historicalTelemetryId;
 	/**
 	 * @type {import('../models/HistoricalTelemetry').HistoricalTelemetry}
 	 */
-	 let historicalTelemetry;
-
+	let historicalTelemetry;
 
 	onMount(async () => {
-        trackedBalloonsList.subscribe((balloons) => {
-		let match = balloons.find((balloon) => balloon.id === historicalTelemetryId);
-		if (match) {
-			historicalTelemetry = match;
-		} else {
-			console.log('telemetryId mismatch -- something stupid happened');
-		}
-	});
+		trackedBalloonsList.subscribe((balloons) => {
+			let match = balloons.find((balloon) => balloon.id === historicalTelemetryId);
+			if (match) {
+				historicalTelemetry = match;
+			} else {
+				console.log('telemetryId mismatch -- something stupid happened');
+			}
+		});
 		if (browser) {
 			const leaflet = await import('leaflet');
 
@@ -49,17 +65,103 @@
 				)
 				.addTo(map);
 
-                /**
+			/**
 			 * @type {number[][]}
 			 */
-                let balloonTrackPoints = [];
-            historicalTelemetry.telemetrySpots.forEach((record)=>{
-                if(record.gridSquare){
-                    let coords = maidenheadToLatLng(record.gridSquare)
-                    balloonTrackPoints.push([coords.latitude, coords.longitude]);
-                }
-            })
-            leaflet.polyline(balloonTrackPoints).addTo(map);
+			let balloonTrackPoints = [];
+
+			/**
+			 * @type {(number | null)[]}
+			 */
+			let balloonAltitudes = [];
+			/**
+			 * @type {(number | null)[]}
+			 */
+			 let balloonPowers = [];
+
+			 	/**
+			 * @type {(number | null)[]}
+			 */
+			 let balloonSpeeds = [];
+
+
+
+			/**
+			 * @type {(string | undefined)[]}
+			 */
+			let balloonAltitudesLabels = [];
+			historicalTelemetry.telemetrySpots.forEach((record) => {
+				if (record.gridSquare) {
+					let coords = maidenheadToLatLng(record.gridSquare);
+					balloonTrackPoints.push([coords.latitude, coords.longitude]);
+					
+				}
+				balloonAltitudes.push(record.altitude);
+				balloonAltitudesLabels.push(record.lastUpdated?.toString())
+				balloonPowers.push(record.battery);
+				balloonSpeeds.push(record.speed)
+			});
+			leaflet.polyline(balloonTrackPoints).addTo(map);
+			new Chart(altitudeChart, {
+				type: 'line',
+				data: {
+					labels: balloonAltitudesLabels.reverse(),
+					datasets: [
+						{
+							label: 'Altitude (M)',
+							data: balloonAltitudes.reverse(),
+							borderWidth: 1
+						}
+					]
+				},
+				options: {
+					scales: {
+						y: {
+							beginAtZero: true
+						}
+					}
+				}
+			});
+			new Chart(powerChart, {
+				type: 'line',
+				data: {
+					labels: balloonAltitudesLabels.reverse(),
+					datasets: [
+						{
+							label: 'Power (V)',
+							data: balloonPowers.reverse(),
+							borderWidth: 1
+						}
+					]
+				},
+				options: {
+					scales: {
+						y: {
+							beginAtZero: true
+						}
+					}
+				}
+			});
+			new Chart(speedsChart, {
+				type: 'line',
+				data: {
+					labels: balloonAltitudesLabels.reverse(),
+					datasets: [
+						{
+							label: 'Speed (Knots)',
+							data: balloonSpeeds.reverse(),
+							borderWidth: 1
+						}
+					]
+				},
+				options: {
+					scales: {
+						y: {
+							beginAtZero: true
+						}
+					}
+				}
+			});
 		}
 	});
 
@@ -76,20 +178,35 @@
 		});
 	};
 </script>
+<div class="mainTitle">
+
+	<h1>{historicalTelemetry?.name}</h1>
+	<button on:click={closeDashboardClick}>x</button>
+</div>
 
 <main>
-	<button on:click={closeDashboardClick}>x</button>
 	<div id="map" bind:this={mapElement} />
+	<canvas bind:this={altitudeChart} />
+	<canvas bind:this={speedsChart} />
+	<canvas bind:this={powerChart} />
 </main>
 
 <style>
 	@import 'leaflet/dist/leaflet.css';
+	.mainTitle{
+		display: flex;
+		justify-content: space-between;
+	}
 	main {
 		padding: 10px;
 	}
 	#map {
-		height: 600px;
-		width: 90%;
+		height: 400px;
+		width: 100%;
+	}
+
+	canvas {
+		max-height: 200px;
 	}
 
 	button {

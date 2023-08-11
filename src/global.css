@@ -1,9 +1,12 @@
-html, body {
+html,
+body {
 	position: relative;
 	width: 100%;
 	height: 100%;
 }
 
-body{
-    background-color: antiquewhite;
+body {
+	background-color: #fff7ee;
+	opacity: 1;
+	background-image: repeating-radial-gradient(circle at 0 0, transparent 0, #fff7ee 11px), repeating-linear-gradient(#ffedce55, #ffedce);
 }

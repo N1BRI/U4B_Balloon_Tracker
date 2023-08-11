@@ -51,7 +51,7 @@
 
 
 </script>
-<Modal showModal={showDashboard} height="90%" width="90%">
+<Modal showModal={showDashboard} height="100%" width="100%">
 	<Dashboard on:closeDashboardClick={handleCloseDashboardClick} historicalTelemetryId={historicalTelemetryId}></Dashboard>
 </Modal>
 <Modal {showModal}>
