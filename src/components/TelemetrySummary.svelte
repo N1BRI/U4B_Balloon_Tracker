@@ -151,7 +151,7 @@
 	<div id="callsign"><h3>{historicalTelemetry.name}</h3></div>
 	{#await promise}
 		<center>
-			<div class="spinner" id="big-spinner" />
+			<!-- <div class="spinner" id="big-spinner" /> -->
 			<p>...fetching latest telemetry data</p>
 		</center>
 	{:then}
@@ -201,6 +201,8 @@
 	#big-spinner {
 		height: 3rem;
 		width: 3rem;
+		position: absolute;
+		z-index: 0;
 	}
 	h3,
 	i {

@@ -22,8 +22,7 @@
             align-items: center;
         }
         .modal-content-container{
-            overflow-y: scroll;
-		overflow: scroll;
+		    overflow: scroll;
             min-height: 420px;
             min-width: 340px;
             background-color: #eee;
