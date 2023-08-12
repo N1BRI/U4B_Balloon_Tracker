@@ -24,7 +24,7 @@
         .modal-content-container{
 		    overflow: scroll;
             min-height: 420px;
-            min-width: 340px;
+            min-width: 380px;
             background-color: #eee;
             border: 1px solid transparent;
             border-radius: 4px;

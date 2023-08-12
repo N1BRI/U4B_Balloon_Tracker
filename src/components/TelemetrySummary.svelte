@@ -227,7 +227,7 @@
 		margin-top: 10px;
 		max-width: 300px;
 		min-width: 300px;
-		min-height: 400px;
+		min-height: 420px;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		border-radius: 6px;
 		background-color: #f5f0f0;

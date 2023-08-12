@@ -55,7 +55,7 @@
 	<Dashboard on:closeDashboardClick={handleCloseDashboardClick} historicalTelemetryId={historicalTelemetryId}></Dashboard>
 </Modal>
 <Modal {showModal}>
-	<AddBalloonForm
+	<AddBalloonForm 
 		on:cancelAddBalloonClicked={handleCancelAddBalloonClicked}
 		on:submitAddBalloonClicked={handleSubmitAddBalloonClicked}
 	/>
