@@ -81,6 +81,7 @@
 </main>
 
 <style>
+	@import 'mini.css/dist/mini-default.min.css';
 	.panel-row {
 		display: flex;
 		align-items: center;
