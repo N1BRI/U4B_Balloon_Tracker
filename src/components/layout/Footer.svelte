@@ -21,7 +21,8 @@
 		bottom: 0; /* Position the footer at the bottom */
 		width: 100%; /* Full width */
 		padding: 0;
-        margin: 0px
+        margin: 0px;
+        flex-wrap: wrap;
 	}
 
 </style>
