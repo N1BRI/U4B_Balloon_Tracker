@@ -21,7 +21,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow-y: scroll;
         }
         .modal-content-container{
             position: fixed;
@@ -32,5 +31,6 @@
             border-radius: 4px;
             padding: 1rem;
             z-index: 9999;
+            overflow: auto;
         }
     </style>
