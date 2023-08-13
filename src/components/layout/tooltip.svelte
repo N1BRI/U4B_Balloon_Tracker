@@ -39,4 +39,7 @@
 	.tooltip:hover .tooltiptext {
 		visibility: visible;
 	}
+	.tooltip:hover:after{
+		opacity: 0;
+	}
 </style>

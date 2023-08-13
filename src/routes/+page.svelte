@@ -94,7 +94,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		flex-direction: row;
-		padding: 0px 10px 100px 10px;
+		padding: 0px 10px 150px 10px;
 		margin: 0 auto;
 	}
 

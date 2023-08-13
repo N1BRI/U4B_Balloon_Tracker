@@ -9,7 +9,7 @@
 <div class="navbar">
 	<div class="logo">
 		<img src="/balloon_icon.png" alt="logo">
-		<h3>U4B.LIVE <small>High Altitude Balloon Tracker</small></h3>
+		<h4>U4B.LIVE <small>High Altitude Balloon Tracker</small></h4>
 	</div>
 	<div class="menu-icon" on:click={toggleMobileMenu}>&#9776;</div>
 	<ul class:active={isMobileMenuOpen} class="nav-links">
@@ -81,7 +81,7 @@
 			display: none; /* Hide by default on smaller screens */
 			flex-direction: column;
 			position: absolute;
-			top: 60px;
+			top: 82px;
 			right: 0;
 			width: 100%;
 			background-color: #00abab;
