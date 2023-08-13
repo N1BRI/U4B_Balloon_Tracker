@@ -14,15 +14,17 @@
     {/if}
     <style>
         .modal-background{
-            position: fixed;
+            position:absolute;
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.377);
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-y: scroll;
         }
         .modal-content-container{
+            position: fixed;
             min-height: 420px;
             min-width: 380px;
             background-color: #eee;

@@ -94,7 +94,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		flex-direction: row;
-		padding: 1em;
+		padding: 0px 10px 100px 10px;
 		margin: 0 auto;
 	}
 
@@ -115,4 +115,10 @@
 	.startMsg {
 		color: #787878;
 	}
+
+	@media (max-width: 767px) {
+  main {
+    justify-content: center;
+  }
+}
 </style>
