@@ -25,6 +25,10 @@
 		text-align: center;
 		padding: 5px;
 		border-radius: 6px;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+  right: 0%;
 
 		/* Position the tooltip text - see examples below! */
 		position: absolute;

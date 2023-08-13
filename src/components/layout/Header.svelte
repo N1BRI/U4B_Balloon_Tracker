@@ -8,7 +8,8 @@
 
 <div class="navbar">
 	<div class="logo">
-		<h2>U4B Balloon Tracker</h2>
+		<img src="/balloon_icon.png" alt="logo">
+		<h3>U4B.LIVE <small>High Altitude Balloon Tracker</small></h3>
 	</div>
 	<div class="menu-icon" on:click={toggleMobileMenu}>&#9776;</div>
 	<ul class:active={isMobileMenuOpen} class="nav-links">
@@ -33,11 +34,15 @@
 		display: flex;
 		align-items: center;
 	}
+	small{
+		color: white;
+	}
 
 	.logo img {
 		width: 40px;
 		height: 40px;
 		margin-right: 10px;
+		color: white;
 	}
 
 	.menu-icon {

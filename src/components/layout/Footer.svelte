@@ -1,15 +1,15 @@
 <footer class="sticky">
 	<div>
-		<p><strong>Version: Test 1.0 </strong>-- de <a href="https://www.qrz.com/db/N1BRI" target="_blank">N1BRI</a></p>
+		<small><strong>Version: Test 1.0 </strong>-- de <a href="https://www.qrz.com/db/N1BRI" target="_blank">N1BRI</a></small>
 	</div>
 	<div>
-		<p>
+		<small>
 			Proudly supported by: 
 			<a href="https://www.arrl.org/" target="_blank">The ARRL</a> &
 			<a href="https://www.w1nrg.com/website/index.html" target="_blank"
 				>Meriden Amateur Radio Club/Wallingford Radio Group</a
 			>
-		</p>
+        </small>
 	</div>
 </footer>
 
