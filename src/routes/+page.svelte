@@ -5,6 +5,7 @@
 	import TelemetrySummary from '../components/TelemetrySummary.svelte';
 	import { trackedBalloonsList } from '../stores';
 	import Dashboard from '../components/Dashboard.svelte';
+	import Footer from '../components/layout/Footer.svelte';
 
 	let showModal = false;
 	let showDashboard = false;
@@ -51,7 +52,7 @@
 
 
 </script>
-<Modal showModal={showDashboard} height="100%" width="100%">
+<Modal showModal={showDashboard} height="100%" width="100%" onOverFlowY="scroll">
 	<Dashboard on:closeDashboardClick={handleCloseDashboardClick} historicalTelemetryId={historicalTelemetryId}></Dashboard>
 </Modal>
 <Modal {showModal}>
@@ -79,6 +80,7 @@
 		</div>
 	{/each}
 </main>
+<Footer/>
 
 <style>
 	.panel-row {
