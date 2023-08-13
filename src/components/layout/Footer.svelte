@@ -1,4 +1,4 @@
-<footer>
+<footer class="sticky">
 	<div>
 		<p><strong>Version: Test 1.0 </strong>-- de <a href="https://www.qrz.com/db/N1BRI" target="_blank">N1BRI</a></p>
 	</div>
