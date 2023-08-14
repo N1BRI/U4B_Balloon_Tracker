@@ -304,17 +304,8 @@
 		altitudeChartInstance.destroy();
 	});
 
-	const closeDashboardClick = () => {
-		dispatch('closeDashboardClick', {
-			showDashboard: false
-		});
-	};
 </script>
 
-<div class="mainTitle">
-	<h1>{historicalTelemetry?.name}</h1>
-	<button on:click={closeDashboardClick}>x</button>
-</div>
 
 <div class="main">
 	<div id="map" bind:this={mapElement} />
@@ -327,43 +318,19 @@
 
 <style>
 	@import 'leaflet/dist/leaflet.css';
-	.mainTitle {
-		display: flex;
-		justify-content: space-between;
-	}
 	#map {
 		height: 400px;
 		width: 100%;
-	}
-	h1 {
-		color: #00abab;
 	}
 	.main {
 		display: flex;
 		z-index: 9999;
 		flex-direction: column;
 		padding: 10px;
-		overflow: scroll;
 	}
 
 	canvas {
 		max-height: 200px;
 	}
 
-	button {
-		float: right;
-		border-radius: 50%;
-		height: 40px;
-		background-color: #00abab;
-		color: white;
-		width: 40px;
-		margin: 1em;
-		border: 1px solid transparent;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	}
-
-	:root {
-		--button-back-color: none;
-		--button-hover-back-color: none;
-	}
 </style>

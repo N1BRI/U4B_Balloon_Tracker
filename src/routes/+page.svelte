@@ -18,6 +18,11 @@
 	 * @type {string}
 	 */
 	let historicalTelemetryId;
+
+	/**
+	 * @type {string}
+	 */
+	let selectedTelemetryTitle;
 	const showAddBalloonModal = () => {
 		showModal = true;
 	};
@@ -36,12 +41,11 @@
 	const handleSubmitAddBalloonClicked = (e) => {
 		showModal = e.detail.showModal;
 	};
-	/**
-	 * @param {{ detail: { showDashboard: boolean, historicalTelemetryId: string }; }} e
-	 */
-	const handleChildButtonClicked = (e) => {
+	
+	const handleOpenDashboardClick = (/** @type {{ detail: { showDashboard: boolean; historicalTelemetryId: string; title: string; }; }} */ e) => {
 		showDashboard = e.detail.showDashboard;
 		historicalTelemetryId = e.detail.historicalTelemetryId;
+		selectedTelemetryTitle = e.detail.title;
 	}
 	/**
 	 * @param {{ detail: { showDashboard: boolean, historicalTelemetryId: string }; }} e
@@ -52,10 +56,10 @@
 
 
 </script>
-<Modal showModal={showDashboard} height="100%" width="100%" onOverFlowY="scroll">
+<Modal bind:showModal={showDashboard} maxHeight={'100%'} maxWidth={'100%'} title={selectedTelemetryTitle}>
 	<Dashboard on:closeDashboardClick={handleCloseDashboardClick} historicalTelemetryId={historicalTelemetryId}></Dashboard>
 </Modal>
-<Modal {showModal}>
+<Modal bind:showModal={showModal} title={"Enter U4B Balloon Information"} maxHeight={'75%'} maxWidth={'500px'}>
 	<AddBalloonForm 
 		on:cancelAddBalloonClicked={handleCancelAddBalloonClicked}
 		on:submitAddBalloonClicked={handleSubmitAddBalloonClicked}
@@ -76,7 +80,7 @@
 	{#each balloons as balloon}
 		<div class="telemetry-container">
 			<TelemetrySummary historicalTelemetry={balloon}
-			on:showDashboardClicked={handleChildButtonClicked}/>
+			on:showDashboardClicked={handleOpenDashboardClick}/>
 		</div>
 	{/each}
 </main>

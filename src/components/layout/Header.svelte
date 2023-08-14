@@ -11,12 +11,12 @@
 		<img src="/balloon_icon.png" alt="logo">
 		<h4>U4B.LIVE <small>High Altitude Balloon Tracker</small></h4>
 	</div>
-	<div class="menu-icon" on:click={toggleMobileMenu}>&#9776;</div>
+	<!-- <div class="menu-icon" on:click={toggleMobileMenu}>&#9776;</div>
 	<ul class:active={isMobileMenuOpen} class="nav-links">
 		<li><a href="#">About</a></li>
 		<li><a href="#">Contact</a></li>
 		<li><a href="#">Links</a></li>
-	</ul>
+	</ul> -->
 </div>
 
 <style>
@@ -41,7 +41,7 @@
 	.logo img {
 		width: 40px;
 		height: 40px;
-		margin-right: 10px;
+		margin: 10px;
 		color: white;
 	}
 

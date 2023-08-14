@@ -7,7 +7,7 @@
 
 <div class="tooltip">
 	<slot />
-	<span class="tooltiptext">{tooltip}</span>
+	<small class="tooltiptext">{tooltip}</small>
 </div>
 
 <style>
@@ -19,15 +19,15 @@
 	/* Tooltip text */
 	.tooltip .tooltiptext {
 		visibility: hidden;
-		width: 220px;
+		width: 120px;
 		background-color: #00abab;
 		color: #fff;
 		text-align: center;
 		padding: 5px;
 		border-radius: 6px;
   bottom: 100%;
-  left: 50%;
-  margin-left: -60px;
+  left: 80%;
+  margin-left: -100px;
   right: 0%;
 
 		/* Position the tooltip text - see examples below! */

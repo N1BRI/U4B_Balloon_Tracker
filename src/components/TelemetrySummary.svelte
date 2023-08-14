@@ -40,7 +40,8 @@
 	const handleShowDashboardClicked = () => {
 		dispatch('showDashboardClicked', {
 			showDashboard: true,
-			historicalTelemetryId: historicalTelemetry.id
+			historicalTelemetryId: historicalTelemetry.id,
+			title: historicalTelemetry.name
 		});
 		console.log("this is htid" + historicalTelemetry.id)
 	};

@@ -74,7 +74,6 @@
 	};
 </script>
 
-<legend>Enter U4B Balloon Information</legend>
 <form>
 	<div class="input-group vertical">
 		<label for="callsign"
@@ -124,7 +123,6 @@
 	</div>
 	<div class="input-group vertical">
 		<button on:click={submitAddBalloonClicked}>Start Tracking</button>
-		<button on:click={cancelAddBalloonClicked}>Cancel</button>
 	</div>
 </form>
 

@@ -1,48 +1,26 @@
 <script>
 	import { fade, scale } from 'svelte/transition';
 	export let showModal = false;
-	export let height = '';
-	export let width = '';
-	export let onOverFlowY = '';
+    export let maxHeight = '';
+    export let maxWidth = '';
+    export let title = '';
+    $:display = showModal ? 'display: flex' : 'display: none';
 </script>
 
 {#if showModal === true}
-	<div class="modal-background" transition:fade>
-		<div
-			class="modal-content-container"
-			style="height: {height}; width: {width}; overflow-y: {onOverFlowY}"
-			transition:scale
-		>
-			<slot />
+	<input type="checkbox" id="modal-control" class="modal" on:click={()=>showModal = false} transition:fade>
+	<div role="dialog" aria-labelledby="dialog-title" style={display} >
+		<div class="card large test" style="max-width: {maxWidth}; max-height: {maxHeight};" transition:scale>
+			<label for="modal-control" class="modal-close" />
+			<h3 class="section" id="dialog-title">{title}</h3>
+			<div class="section">
+                <slot></slot>
+            </div>
 		</div>
 	</div>
 {/if}
 
 <style>
-	.modal-background {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0, 0, 0, 0.377);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-	.modal-content-container {
-		position: fixed;
-		min-height: 400px;
-		min-width: 360px;
-		background-color: #eee;
-		border: 1px solid transparent;
-		border-radius: 4px;
-		padding: 1rem;
-		z-index: 9999;
-		overflow: auto;
-	}
 
-	@media (max-width: 767px) {
-		.modal-content-container {
-			max-height: 600px;
-		}
-	}
+
 </style>
