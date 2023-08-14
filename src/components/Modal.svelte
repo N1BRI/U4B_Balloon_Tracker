@@ -12,7 +12,7 @@
 	<div role="dialog" aria-labelledby="dialog-title" style={display} >
 		<div class="card large test" style="max-width: {maxWidth}; max-height: {maxHeight};" transition:scale>
 			<label for="modal-control" class="modal-close" />
-			<h3 class="section" id="dialog-title">{title}</h3>
+			<strong class="section" id="dialog-title">{title}</strong>
 			<div class="section">
                 <slot></slot>
             </div>
