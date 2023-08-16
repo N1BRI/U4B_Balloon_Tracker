@@ -21,6 +21,8 @@
 {/if}
 
 <style>
-
+[type="checkbox"].modal + div {
+	position: absolute;
+}
 
 </style>

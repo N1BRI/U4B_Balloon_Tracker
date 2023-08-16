@@ -59,7 +59,7 @@
 <Modal bind:showModal={showDashboard} maxHeight={'100%'} maxWidth={'100%'} title={selectedTelemetryTitle}>
 	<Dashboard on:closeDashboardClick={handleCloseDashboardClick} historicalTelemetryId={historicalTelemetryId}></Dashboard>
 </Modal>
-<Modal bind:showModal={showModal} title={"Enter U4B Balloon Information"} maxHeight={'75%'} maxWidth={'500px'}>
+<Modal bind:showModal={showModal} title={"Enter U4B Balloon Information"} maxHeight={'90%'} maxWidth={'500px'}>
 	<AddBalloonForm 
 		on:cancelAddBalloonClicked={handleCancelAddBalloonClicked}
 		on:submitAddBalloonClicked={handleSubmitAddBalloonClicked}
@@ -76,7 +76,7 @@
 		</div>
 	{/if}
 </div>
-<main class="">
+<main class="container">
 	{#each balloons as balloon}
 		<div class="telemetry-container">
 			<TelemetrySummary historicalTelemetry={balloon}
@@ -94,13 +94,7 @@
 	.telemetry-container {
 		margin: 10px;
 	}
-	main {
-		display: flex;
-		flex-wrap: wrap;
-		flex-direction: row;
-		padding: 0px 10px 150px 10px;
-		margin: 0 auto;
-	}
+
 
 	#addBalloonBtn:active {
 		background-color: #017272;

@@ -5,6 +5,7 @@
 	import { maidenheadToLatLng } from '../models/coordinates';
 	import { Chart, registerables } from 'chart.js';
 	import { createTelemetry } from '../models/telemetry';
+	import { celsiusToFahrenheit, knotsToMPH, metersToFeet } from '../helpers';
 
 	Chart.register(...registerables);
 
@@ -119,9 +120,7 @@
 					) {
 						altitudeChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
 						altitudeChartInstance.data.datasets[0].data.push(
-							latestTelemetry.altitude
-								? latestTelemetry.altitude * 3.28084
-								: latestTelemetry.altitude
+							metersToFeet(latestTelemetry.altitude)
 						);
 						altitudeChartInstance.update();
 					}
@@ -145,8 +144,7 @@
 						)
 					) {
 					speedChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
-					speedChartInstance.data.datasets[0].data.push(
-						latestTelemetry.speed ? latestTelemetry.speed * 1.15078 : latestTelemetry.speed
+					speedChartInstance.data.datasets[0].data.push(knotsToMPH(latestTelemetry.speed) 
 					);
 					speedChartInstance.update();
 					}
@@ -158,11 +156,7 @@
 						)
 					) {
 						temperatureChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
-						temperatureChartInstance.data.datasets[0].data.push(
-							latestTelemetry.temperature
-								? (latestTelemetry.temperature * 9) / 5 + 32
-								: latestTelemetry.temperature
-						);
+						temperatureChartInstance.data.datasets[0].data.push(celsiusToFahrenheit(latestTelemetry.temperature));
 						temperatureChartInstance.update();
 					}
 					}

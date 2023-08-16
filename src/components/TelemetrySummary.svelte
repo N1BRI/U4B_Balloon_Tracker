@@ -5,6 +5,7 @@
 	import { trackedBalloonsList } from '../stores';
 	import { decodeTelemetry } from '../U4B';
 	import { createTelemetry } from '../models/telemetry';
+	import { celsiusToFahrenheit, knotsToMPH, metersToFeet } from '../helpers';
 
 	const dispatch = createEventDispatcher();
 
@@ -28,8 +29,8 @@
 				if (match.telemetrySpots.length > 1) {
 					match.telemetrySpots[match.telemetrySpots.length - 1];
 				} else {
-					match.telemetrySpots = [createTelemetry()];
-					telemetry = match.telemetrySpots[match.telemetrySpots.length - 1];
+					//match.telemetrySpots = [createTelemetry()];
+					//telemetry = match.telemetrySpots[match.telemetrySpots.length - 1];
 				}
 			}
 		} else {
@@ -152,17 +153,17 @@
 	<div id="callsign"><h3>{historicalTelemetry.name}</h3></div>
 	{#await promise}
 		<center>
-			<!-- <div class="spinner" id="big-spinner" /> -->
+			<div class="spinner" id="big-spinner" />
 			<p>...fetching latest telemetry data</p>
 		</center>
 	{:then}
 		{#if dataFound}
 			<h5 style="margin-top: 15px;">Callsign: {historicalTelemetry.callsign}</h5>
 			<h5>Telemetry Callsign: {telemetry.telemetryCallsign}</h5>
-			<h5>Temperature (C): {telemetry.temperature}</h5>
-			<h5>Battery (V): {telemetry.battery}</h5>
-			<h5>Altitude (M): {telemetry.altitude}</h5>
-			<h5>Speed (Knots): {telemetry.speed}</h5>
+			<h5>Temperature (f): {celsiusToFahrenheit(telemetry.temperature)}</h5>
+			<h5>Battery (v): {telemetry.battery}</h5>
+			<h5>Altitude (ft): {metersToFeet(telemetry.altitude)}</h5>
+			<h5>Speed (mph): {knotsToMPH(telemetry.speed)}</h5>
 			<h5>Grid Square: {telemetry.gridSquare}</h5>
 			<h5>GPS Status: {telemetry.gpsStatus}</h5>
 			<h5>Satellite Status: {telemetry.satsStatus}</h5>
@@ -202,7 +203,7 @@
 	#big-spinner {
 		height: 3rem;
 		width: 3rem;
-		position: absolute;
+		position: relative;
 		z-index: 0;
 	}
 	h3,
