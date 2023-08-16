@@ -17,13 +17,9 @@
 		position: fixed;
 		bottom: 0; /* Position the footer at the bottom */
 		width: 100%; /* Full width */
-		padding:0;
+		padding: 0 5px;
         margin: 0px;
         flex-wrap: wrap;
-
-	}
-	small{
-		padding: 5px;
 	}
 
 </style>

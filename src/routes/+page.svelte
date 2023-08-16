@@ -76,7 +76,7 @@
 		</div>
 	{/if}
 </div>
-<main class="container">
+<main class="main-panel">
 	{#each balloons as balloon}
 		<div class="telemetry-container">
 			<TelemetrySummary historicalTelemetry={balloon}
@@ -87,6 +87,12 @@
 <Footer/>
 
 <style>
+	.main-panel{
+		display: flex;
+		flex-wrap: wrap;
+		margin-bottom: 100px;
+		padding-bottom: 300px;
+	}
 	.panel-row {
 		display: flex;
 		align-items: center;
