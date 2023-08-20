@@ -1,25 +1,13 @@
-<footer class="sticky">
-		<small><strong>Version: Test 1.0 </strong>-- de <a href="https://www.qrz.com/db/N1BRI" target="_blank">N1BRI</a></small>
+<footer class="flex justify-between fixed w-full px-3 flex-wrap bg-neutral-200 bottom-0 p-1">
+		<small><strong>Version: Test 1.0 </strong>-- de <a href="https://www.qrz.com/db/N1BRI" target="_blank" class="hover:underline">N1BRI</a></small>
 
 		<small>
 			Proudly supported by: 
-			<a href="https://www.arrl.org/" target="_blank">The ARRL</a> &
-			<a href="https://www.w1nrg.com/website/index.html" target="_blank"
+			<a href="https://www.arrl.org/" target="_blank" class="hover:underline">The ARRL</a> &
+			<a href="https://www.w1nrg.com/website/index.html" target="_blank" class="hover:underline"
 				>Meriden Amateur Radio Club/Wallingford Radio Group</a
 			>
         </small>
 </footer>
 
-<style>
-	footer {
-		display: flex;
-		justify-content: space-between;
-		position: fixed;
-		bottom: 0; /* Position the footer at the bottom */
-		width: 100%; /* Full width */
-		padding: 0 5px;
-        margin: 0px;
-        flex-wrap: wrap;
-	}
 
-</style>

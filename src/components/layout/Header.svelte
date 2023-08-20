@@ -1,100 +1,51 @@
 <script>
-	let isMobileMenuOpen = false;
+
+	let hidden = true;
 
 	function toggleMobileMenu() {
-		isMobileMenuOpen = !isMobileMenuOpen;
+		hidden = !hidden;
 	}
 </script>
 
-<div class="navbar">
-	<div class="logo">
-		<img src="/balloon_icon.png" alt="logo">
-		<h4>U4B.LIVE <small>High Altitude Balloon Tracker</small></h4>
+<div class="bg-teal-500 text-white flex justify-between p-1">
+	<div class="flex mx-4 items-center">
+		<div class="p-1">
+			<img src="/balloon_icon.png" alt="logo" />
+		</div>
+		<div class="mx-3 my-1 flex flex-col">
+			<h1 class="text-xl">U4B.LIVE</h1>
+			<span class="text-m">High Altitude Balloon Tracker</span>
+		</div>
 	</div>
-	<!-- <div class="menu-icon" on:click={toggleMobileMenu}>&#9776;</div>
-	<ul class:active={isMobileMenuOpen} class="nav-links">
-		<li><a href="#">About</a></li>
-		<li><a href="#">Contact</a></li>
-		<li><a href="#">Links</a></li>
-	</ul> -->
+	<div class="hidden md:flex mx-4 justify-center items-center">
+		<ul class="flex">
+			<li class="mx-2 hover:underline"><a href="#">About</a></li>
+			<li class="mx-2 hover:underline"><a href="#">Tracking Log</a></li>
+			<li class="mx-2 hover:underline"><a href="#">Contact</a></li>
+			<li class="mx-2 hover:underline"><a href="#">Links</a></li>
+		</ul>
+	</div>
+	<div class="md:hidden mx-4 p-4">
+		<button on:click={toggleMobileMenu}><svg 
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			stroke-width="1.5"
+			stroke="currentColor"
+			class="w-6 h-6"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+			/>
+		</svg>
+	</button>
+	</div>
 </div>
-
-<style>
-	/* Navbar styles */
-	.navbar {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		background-color: #00abab;
-		color: white;
-		padding: 5px;
-	}
-
-	.logo {
-		display: flex;
-		align-items: center;
-	}
-	small{
-		color: white;
-	}
-
-	.logo img {
-		width: 40px;
-		height: 40px;
-		margin: 10px;
-		color: white;
-	}
-
-	.menu-icon {
-		font-size: 1.5rem;
-		cursor: pointer;
-		display: none; /* Hide by default on larger screens */
-	}
-
-	.nav-links {
-		list-style: none;
-		display: flex;
-		margin: 0;
-	}
-
-	.nav-links li {
-		margin-right: 20px;
-	}
-
-    .nav-links li:hover{
-        text-decoration: underline;
-    }
-
-	.nav-links a {
-		text-decoration: none;
-		color: white;
-	}
-
-	/* Responsive styles */
-	@media (max-width: 768px) {
-		.menu-icon {
-			display: block; /* Show on smaller screens */
-			margin-right: 10px;
-		}
-
-		.nav-links {
-			display: none; /* Hide by default on smaller screens */
-			flex-direction: column;
-			position: absolute;
-			top: 82px;
-			right: 0;
-			width: 100%;
-			background-color: #00abab;
-		}
-
-		.nav-links.active {
-			display: flex; /* Show when active */
-		}
-
-		.nav-links li {
-			text-align: center;
-			margin: 0;
-			padding: 10px 0;
-		}
-	}
-</style>
+<div class:hidden={hidden} class="md:hidden  bg-teal-500 text-white  ">
+	<a href="#" class="p-2 block hover:bg-teal-400   py-2">About</a>
+	<a href="#" class="p-2 block  hover:bg-teal-400  py-2">Tracking Log</a>
+	<a href="#" class="p-2 block  hover:bg-teal-400  py-2">Contact</a>
+	<a href="#" class="p-2 block  hover:bg-teal-400  py-2">Links</a>
+</div>

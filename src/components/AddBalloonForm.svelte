@@ -75,6 +75,7 @@
 </script>
 
 <form>
+		<legend>Enter Balloon Information</legend>
 	<div class="input-group vertical">
 		<label for="callsign"
 			>Balloon Launch Name <Tooltip tooltip="This is a unique name of your choosing"
@@ -127,21 +128,5 @@
 </form>
 
 <style>
-	.error {
-		color: red;
-		margin-left: 10px;
-	}
-	.copyMini {
-		box-sizing: border-box;
-		background: var(--input-back-color);
-		color: var(--input-fore-color);
-		border: 0.0625rem solid var(--input-border-color);
-		border-radius: var(--universal-border-radius);
-		margin: calc(var(--universal-margin) / 2);
-		padding: var(--universal-padding) calc(1.5 * var(--universal-padding));
-	}
-	button {
-		background-color: #00abab;
-		color: white;
-	}
+	
 </style>
