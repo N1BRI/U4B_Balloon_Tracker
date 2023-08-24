@@ -1,37 +1,30 @@
 <script>
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { afterUpdate, onDestroy, onMount } from 'svelte';
 	import '../app.css';
 	import BalloonConfigForm from '../components/BalloonConfigForm.svelte';
-
+	import { balloonConfigData } from '../stores';
 
 export let form;
+/**
+	 * @type {{ launchName: any; callsign?: any; slotId?: number; telCallFormat?: any; startDate?: Date; }}
+	 */
+let configData;
 
-console.log(form)
+if(form?.success){
+	configData = form.formData;
+}
 
-
-
-
-	    /**
-     * @type BalloonConfigFormData
-     */
-	let balloonFormData = {
-		launchName: null,
-		callsign: null,
-		telCallFormat: null,
-		slotId: null,
-		startDate: null
-	};
-
-	let formData = form?.formData ?? balloonFormData;
 
 	onMount(async () => {
-		balloonFormData.launchName = $page.url.searchParams.get('launchname');
-		balloonFormData.callsign = $page.url.searchParams.get('callsign');
-		balloonFormData.telCallFormat = $page.url.searchParams.get('telcallsign');
-		balloonFormData.slotId = parseInt($page.url.searchParams.get('slotid') ?? '');
+
 
 	});
+
+onDestroy(()=>{
+	console.log("hey i got called on the form submit")
+})
 </script>
 
-<BalloonConfigForm formData={formData}/>
+<BalloonConfigForm form={form}/>
+<h1>{configData?.launchName}</h1>

@@ -8,3 +8,4 @@
  * @property {Date | null} startDate 
  */
 
+export default BalloonConfigFormData;

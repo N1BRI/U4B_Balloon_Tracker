@@ -1,7 +1,8 @@
 
 import { z } from 'zod';
+
 import BalloonConfigForm from '../components/BalloonConfigForm.svelte';
-import { balloonTelemetry } from '../stores';
+import { balloonConfigData } from '../stores';
 
 import { fail, json } from '@sveltejs/kit';
 const formatMaskRegex = /^[0-9]_[0-9]$/;
@@ -12,7 +13,7 @@ const balloonConfigSchema = z.object({
     launchName: z.string().min(2).max(30),
     slotId: z.number().min(0).max(9),
     startDate: z.date().default(new Date())
-  });
+});
 
 export const actions = {
     default: async ({ request }) => {
@@ -21,19 +22,20 @@ export const actions = {
         console.log(balloonConfigFormData);
 
         const result = balloonConfigSchema.safeParse(balloonConfigFormData);
-        if(result.success){
-            return {success: true, formData: balloonConfigFormData}
+        if (result.success) {
+            balloonConfigData.set(balloonConfigFormData);
+            return { success: true, formData: balloonConfigFormData }
         }
-        else{
-           const {fieldErrors: errors} = result.error.flatten();
-            
-            return fail(400, { errors , formData: balloonConfigFormData });
+        else {
+            const { fieldErrors: errors } = result.error.flatten();
+
+            return fail(400, { errors, formData: balloonConfigFormData });
 
         }
     }
 }
-          
-          
+
+
 
 
 

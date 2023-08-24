@@ -12,3 +12,14 @@ export let trackedBalloonsList = writable([]);
  * @type {import('svelte/store').Writable<Array<import('./models/telemetry').Telemetry>>}
  */
 export let balloonTelemetry = writable([]);
+
+/**
+ * @type {import('svelte/store').Writable<import('./models/BalloonConfigFormData').BalloonConfigFormData>}
+ */
+export let balloonConfigData = writable({
+    launchName: null,
+    callsign: null,
+    telCallFormat: null,
+    slotId: null,
+    startDate: null
+});
