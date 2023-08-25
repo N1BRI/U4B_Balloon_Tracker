@@ -1,15 +1,11 @@
 
 import { z } from 'zod';
-
-import BalloonConfigForm from '../components/BalloonConfigForm.svelte';
-import { balloonConfigData } from '../stores';
-
 import { fail, json } from '@sveltejs/kit';
-const formatMaskRegex = /^[0-9]_[0-9]$/;
+
 
 const balloonConfigSchema = z.object({
     callsign: z.string().min(4).max(7).toUpperCase(),
-    telCallFormat: z.string().regex(/^[0-9]_[0-9]$/),
+    telCallFormat: z.string().regex(/^[0-9]_[0-9]$/, "Invalid format. Please ensure input is n_n where n=0-9"),
     launchName: z.string().min(2).max(30),
     slotId: z.number().min(0).max(9),
     startDate: z.date().default(new Date())
@@ -23,7 +19,6 @@ export const actions = {
 
         const result = balloonConfigSchema.safeParse(balloonConfigFormData);
         if (result.success) {
-            balloonConfigData.set(balloonConfigFormData);
             return { success: true, formData: balloonConfigFormData }
         }
         else {

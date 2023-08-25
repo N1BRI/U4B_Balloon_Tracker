@@ -31,7 +31,7 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
             SELECT tx_sign, tx_loc AS tel_loc, rx_sign, time, power,
                    ROW_NUMBER() OVER (PARTITION BY time ORDER BY time DESC) AS row_num
             FROM wspr.rx
-            WHERE tx_sign LIKE '${formatMask}'
+            WHERE tx_sign LIKE '${formatMask}%'
             AND CAST(EXTRACT(minute FROM time) AS VARCHAR2) LIKE '%${telemetrySlotId}'
             AND time >= '${lastUpdateString}'
         )
