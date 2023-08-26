@@ -1,7 +1,5 @@
 <script>
-	import { error } from '@sveltejs/kit';
 	import { createEventDispatcher } from 'svelte';
-	let isTracking = false;
 	/**
 	 * @type import("../routes/$types").ActionData
 	 */
@@ -14,11 +12,9 @@
 	const handleToggleTimerClick = () => {
 		dispatch('toggleTimerClicked', {});
 	};
-
-	
 </script>
 
-<form class="flex flex-col bg-gray-100 shadow-md" method="POST">
+<form class="flex flex-col bg-gray-100 shadow-md" method="POST" action="?/balloon">
 	<div class="flex justify-between pt-3">
 		<h1 class="text-2xl px-6">Enter Balloon Information</h1>
 		<div class="flex flex-wrap justify-between mr-6">
@@ -42,11 +38,13 @@
 					/>
 				</svg>
 			</button>
-			<button
-				on:click|preventDefault
-				class="rounded-md border-2 border-solid border-gray-300 px-2 m-1 transition ease-in-out hover:bg-slate-200 duration-300"
-				>W1NRG🎈</button
-			>
+			<form action="?/w1nrg" method="POST">
+				<button
+					
+					class="rounded-md border-2 border-solid border-gray-300 px-2 m-1 transition ease-in-out hover:bg-slate-200 duration-300"
+					>W1NRG🎈</button
+				>
+			</form>
 			<button
 				class="rounded-md border-2 border-solid border-gray-300 px-2 m-1 transition ease-in-out hover:bg-slate-200 duration-300"
 				>Start Tracking</button
@@ -54,25 +52,14 @@
 		</div>
 	</div>
 	<div class="flex flex-wrap justify-between flex-1 pb-1 px-4">
-		<div class="p-2 flex flex-col flex-1">
-			<label for="callsign">Launch Name</label>
-			<input
-				value={form?.formData.launchName ?? ''}
-				type="text"
-				name="launchName"
-				class="px-2 rounded-md border-2 border-solid border-gray-300"
-			/>
-			{#if form?.errors?.launchName}
-				<small class="text-red-600">{form?.errors?.launchName}</small>
-			{/if}
-		</div>
+	
 		<div class="p-2 flex flex-col flex-1">
 			<label for="callsign">Callsign</label>
 			<input
 				value={form?.formData.callsign ?? ''}
 				type="text"
 				name="callsign"
-				class="px-2 rounded-md border-2 border-solid border-gray-300"
+				class="px-2 rounded-md border-2 border-solid border-gray-300 max-w-sm"
 			/>
 			{#if form?.errors?.callsign}
 				<small class="text-red-600">{form?.errors?.callsign}</small>
@@ -84,7 +71,7 @@
 				value={form?.formData.telCallFormat ?? ''}
 				type="text"
 				name="telCallFormat"
-				class="px-2 rounded-md border-2 border-solid border-gray-300"
+				class="px-2 rounded-md border-2 border-solid border-gray-300 max-w-sm"
 			/>
 			{#if form?.errors?.telCallFormat}
 				<small class="text-red-600">{form?.errors?.telCallFormat}</small>
@@ -102,7 +89,7 @@
 				min="0"
 				type="number"
 				name="slotId"
-				class="px-2 rounded-md border-2 border-solid border-gray-300"
+				class="px-2 rounded-md border-2 border-solid border-gray-300 max-w-sm"
 			/>
 			{#if form?.errors?.slotId}
 				<small class="text-red-600">{form?.errors?.slotId}</small>
@@ -115,7 +102,7 @@
 					new Date().toISOString().slice(0, 10)}
 				type="date"
 				name="startDate"
-				class="px-2 rounded-md border-2 border-solid border-gray-300"
+				class="px-2 rounded-md border-2 border-solid border-gray-300 max-w-sm"
 			/>
 			{#if form?.errors?.startDate}
 				<small class="text-red-600">{form?.errors?.startDate}</small>

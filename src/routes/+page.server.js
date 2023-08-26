@@ -3,16 +3,23 @@ import { z } from 'zod';
 import { fail, json } from '@sveltejs/kit';
 
 
+
+const w1nrg = {
+        callsign: 'W1NRG',
+        slotId: 6,
+        telCallFormat: '1_6',
+        startDate: new Date('08/26/2023')
+}
+
 const balloonConfigSchema = z.object({
     callsign: z.string().min(4).max(7).toUpperCase(),
     telCallFormat: z.string().regex(/^[0-9]_[0-9]$/, "Invalid format. Please ensure input is n_n where n=0-9"),
-    launchName: z.string().min(2).max(30),
     slotId: z.number().min(0).max(9),
     startDate: z.date().default(new Date())
 });
 
 export const actions = {
-    default: async ({ request }) => {
+    balloon: async ({ request }) => {
         const formData = await request.formData();
         const balloonConfigFormData = formDataToBalloonConfigFormData(formData);
         console.log(balloonConfigFormData);
@@ -27,6 +34,11 @@ export const actions = {
             return fail(400, { errors, formData: balloonConfigFormData });
 
         }
+    },
+    w1nrg: async ({ request }) =>{
+        console.log("called")
+        return { success: true, formData: w1nrg }
+        
     }
 }
 
@@ -39,7 +51,6 @@ export const actions = {
  */
 function formDataToBalloonConfigFormData(formData) {
     return {
-        launchName: formData.get('launchName'),
         callsign: formData.get('callsign'),
         slotId: parseInt(formData.get('slotId')),
         telCallFormat: formData.get('telCallFormat'),
