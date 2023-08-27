@@ -1,6 +1,7 @@
 
 import { z } from 'zod';
-import { fail, json } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
+import { balloonTelemetry } from '../stores.js';
 
 
 
@@ -22,7 +23,7 @@ export const actions = {
     balloon: async ({ request }) => {
         const formData = await request.formData();
         const balloonConfigFormData = formDataToBalloonConfigFormData(formData);
-        console.log(balloonConfigFormData);
+        balloonTelemetry.set([]);
 
         const result = balloonConfigSchema.safeParse(balloonConfigFormData);
         if (result.success) {
@@ -34,11 +35,11 @@ export const actions = {
             return fail(400, { errors, formData: balloonConfigFormData });
 
         }
+        
     },
     w1nrg: async ({ request }) =>{
-        console.log("called")
-        return { success: true, formData: w1nrg }
-        
+        balloonTelemetry.set([]);
+        return { success: true, formData: w1nrg }    
     }
 }
 

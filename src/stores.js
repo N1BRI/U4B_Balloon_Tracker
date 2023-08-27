@@ -17,9 +17,8 @@ export let balloonTelemetry = writable([]);
  * @type {import('svelte/store').Writable<import('./models/BalloonConfigFormData').BalloonConfigFormData>}
  */
 export let balloonConfigData = writable({
-    launchName: null,
-    callsign: null,
-    telCallFormat: null,
-    slotId: null,
-    startDate: null
+    callsign: '',
+    telCallFormat: '',
+    slotId: 0,
+    startDate: new Date()
 });

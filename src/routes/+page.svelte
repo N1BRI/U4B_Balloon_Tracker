@@ -2,8 +2,9 @@
 	import { onDestroy, onMount } from 'svelte';
 	import '../app.css';
 	import BalloonConfigForm from '../components/BalloonConfigForm.svelte';
-	import { buildTelemetryQuery } from '../queries';
 	import Spinner from '../components/layout/Spinner.svelte';
+	import { balloonTelemetry } from '../stores';
+	import { getTelemetryData } from '../queries';
 
 	export let form;
 	/**
@@ -12,21 +13,17 @@
 	let configData;
 
 	/**
-	 * @type import('../models/telemetry').Telemetry[]
-	 */
-	let telemetry = [];
-
-	/**
 	 * @type {Promise<void>}
 	 */
 	let promise;
-
-	let historicalQueryRan = false;
 	/**
 	 * @type {string | number | NodeJS.Timeout | undefined | null}
 	 */
 	let telemetryTimerId = null;
-	let timerStroke = 'gray'
+	let historicalQueryRan = false;
+	let timerStroke = 'gray';
+
+	let balloonConfigLoaded = false;
 
 	function startTelemetryTimer() {
 		timerStroke = timerStroke === 'gray' ? 'blue' : 'gray';
@@ -35,47 +32,60 @@
 			telemetryTimerId = null;
 		} else {
 			telemetryTimerId = setInterval(() => {
-				promise = getTelemetryData();
+				promise = getTelemetryData(configData, historicalQueryRan);
 			}, 20000);
 		}
 	}
+	/**
+	 * @type {Array<import('../models/telemetry').Telemetry>}
+	 */
+	let latestBalloonTelemetry;
+	balloonTelemetry.subscribe((value) => {
+		latestBalloonTelemetry = value;
+	});
 
-	async function getTelemetryData() {
-		if (telemetry.length > 0) {
-			configData.startDate = telemetry[telemetry.length - 1].lastUpdated ?? new Date();
-		}
-		let url = `https://db1.wspr.live/?query=${buildTelemetryQuery(
-			configData.callsign,
-			configData.slotId,
-			configData.telCallFormat,
-			configData.startDate,
-			historicalQueryRan
-		)}+FORMAT+JSON`;
-		const res = await fetch(url);
-		const json = await res.json();
-		historicalQueryRan = true;
-		console.log(json);
-	}
 
-	if (form?.success) {
+	onMount(async () => {
+		balloonTelemetry.set([]);
+		if (form?.success) {
 		configData = form.formData;
-		promise = getTelemetryData();
+		promise = getTelemetryData(configData, historicalQueryRan);
+		balloonConfigLoaded = true;
+		historicalQueryRan = true;
 		startTelemetryTimer();
+	} else {
+		balloonConfigLoaded = false;
 	}
 
-	onMount(async () => {});
+	});
 
 	onDestroy(() => {});
 </script>
 
-<BalloonConfigForm {form} {timerStroke} on:toggleTimerClicked={startTelemetryTimer}/>
+<BalloonConfigForm
+	{form}
+	{timerStroke}
+	{balloonConfigLoaded}
+	on:toggleTimerClicked={startTelemetryTimer}
+/>
+<h1>{latestBalloonTelemetry.length}</h1>
 {#await promise}
 	<center>
 		<Spinner />
 		<p>...fetching latest telemetry data</p>
 	</center>
 {:then}
-	<center></center>
+	<center>
+		{#if latestBalloonTelemetry.length > 0}
+			{#each latestBalloonTelemetry as telemetry}
+				<p>{telemetry.telemetryCallsign}</p>
+				<p>{telemetry.temperature}</p>
+				<p>{telemetry.lastUpdated}</p>
+				<p>{telemetry.gridSquare}</p>
+			{/each}
+		{/if}
+
+	</center>
 {:catch error}
 	<p style="color: red">{error.message}</p>
 {/await}
