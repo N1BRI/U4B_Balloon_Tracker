@@ -10,7 +10,7 @@ export const setCookie = (/** @type {any} */ name, /** @type {any} */ value, /**
  * @param {number | null} temp
  */
  export function celsiusToFahrenheit(temp){
-  return temp === null ? null : (temp * 9) / 5 + 32
+  return temp === null ? null : ((temp * 9) / 5 + 32).toFixed(3)
  }
 
 
@@ -18,7 +18,7 @@ export const setCookie = (/** @type {any} */ name, /** @type {any} */ value, /**
  * @param {number | null} speed
  */
   export function knotsToMPH(speed){
-    return speed === null ? null : speed * 1.15078;
+    return speed === null ? null : (speed * 1.15078).toFixed(3);
    }
 
  
@@ -26,7 +26,7 @@ export const setCookie = (/** @type {any} */ name, /** @type {any} */ value, /**
  * @param {number | null} altitude
  */
   export function metersToFeet(altitude){
-    return altitude === null ? null : altitude * 3.28084;
+    return altitude === null ? null : (altitude * 3.28084).toFixed(3);
    }
 
    
