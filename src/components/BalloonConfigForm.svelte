@@ -31,13 +31,13 @@
 </script>
 
 <form
-	class="flex flex-col flex-wrap bg-gray-100 shadow-md pb-4 px-4"
+	class="flex flex-col flex-wrap bg-gray-100 shadow-md pb-4 px-4 text-s"
 	method="POST"
 	action="?/balloon"
 >
 	<h1 class="mx-1 mt-3 text-xl">Enter U4B Information</h1>
 	<div class="flex flex-col flex-wrap border-2 border-solid rounded-md border-gray-300">
-		<div class="flex flex-wrap flex-1 mx-4">
+		<div class="flex flex-wrap flex-1 mx-4 lg:max-h-16">
 			<div class="pt-2 flex flex-col flex-1 px-2">
 				<label for="callsign">Callsign</label>
 				<input
@@ -45,7 +45,7 @@
 					value={form?.formData.callsign ?? ''}
 					type="text"
 					name="callsign"
-					class="px-2 rounded-md border-2 border-solid border-gray-300 max-w-sm max-w-none"
+					class="px-2 rounded-md border-2 border-solid border-gray-300  max-w-none"
 				/>
 				{#if form?.errors?.callsign}
 					<small class="text-red-600">{form?.errors?.callsign}</small>
@@ -95,7 +95,7 @@
 				{/if}
 			</div>
 		</div>
-		<div class="flex flex-wrap justify-end pb-3 px-1 mx-4">
+		<div class="flex flex-wrap justify-end pb-3 px-1 mx-4 pt-3 s:pt-0">
 			<div>
 				{#if balloonConfigLoaded}
 				<button

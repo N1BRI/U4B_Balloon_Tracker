@@ -47,7 +47,7 @@
 	</div>
 </div>
 <div class:hidden class="md:hidden bg-teal-500 text-white">
-	<a href="#" class="p-2 block hover:bg-teal-400 py-2">About</a>
+	<a href="/about" class="p-2 block hover:bg-teal-400 py-2">About</a>
 	<a href="#" class="p-2 block hover:bg-teal-400 py-2">Tracking Log</a>
 	<a href="#" class="p-2 block hover:bg-teal-400 py-2">Contact</a>
 	<a href="#" class="p-2 block hover:bg-teal-400 py-2">Links</a>

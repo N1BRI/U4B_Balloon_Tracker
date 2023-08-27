@@ -44,19 +44,17 @@
 		latestBalloonTelemetry = value;
 	});
 
-
 	onMount(async () => {
 		balloonTelemetry.set([]);
 		if (form?.success) {
-		configData = form.formData;
-		promise = getTelemetryData(configData, historicalQueryRan);
-		balloonConfigLoaded = true;
-		historicalQueryRan = true;
-		startTelemetryTimer();
-	} else {
-		balloonConfigLoaded = false;
-	}
-
+			configData = form.formData;
+			promise = getTelemetryData(configData, historicalQueryRan);
+			balloonConfigLoaded = true;
+			historicalQueryRan = true;
+			startTelemetryTimer();
+		} else {
+			balloonConfigLoaded = false;
+		}
 	});
 
 	onDestroy(() => {});
@@ -75,17 +73,23 @@
 		<p>...fetching latest telemetry data</p>
 	</center>
 {:then}
-	<center>
-		{#if latestBalloonTelemetry.length > 0}
-			{#each latestBalloonTelemetry as telemetry}
-				<p>{telemetry.telemetryCallsign}</p>
-				<p>{telemetry.temperature}</p>
-				<p>{telemetry.lastUpdated}</p>
-				<p>{telemetry.gridSquare}</p>
-			{/each}
-		{/if}
-
-	</center>
+	{#if latestBalloonTelemetry.length > 0}
+		<div class="flex">
+			<div class="flex flex-1 flex-col">
+				{#each latestBalloonTelemetry as telemetry}
+					<p>{telemetry.telemetryCallsign}</p>
+					<p>{telemetry.temperature}</p>
+					<p>{telemetry.lastUpdated}</p>
+					<p>{telemetry.gridSquare}</p>
+				{/each}
+			</div>
+			<div class="flex flex-4">
+				<div>
+					<h1>{latestBalloonTelemetry[0].lastUpdated}</h1>
+				</div>
+			</div>
+		</div>
+	{/if}
 {:catch error}
 	<p style="color: red">{error.message}</p>
 {/await}
