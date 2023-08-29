@@ -17,9 +17,14 @@ export function maidenheadToLatLng(maidenhead) {
     return { latitude: lat, longitude: lon };
   }
 
+
   /**
  * Represents Lat/Long Coordinates.
  * @typedef {Object} Coordinates
- * @property {number} latitude 
+ * @property {number} latitude
  * @property {number} longitude
+ * @param {{ latitude: any; longitude: any; }} coords
  */
+  export function strCoordinates(coords){
+    return `[${coords.latitude.toFixed(4)}, ${coords.longitude.toFixed(4)}]`
+  }

@@ -1,5 +1,5 @@
 <script>
-	import { onDestroy, onMount } from 'svelte';
+	import { afterUpdate, onDestroy, onMount } from 'svelte';
 	import '../app.css';
 	import BalloonConfigForm from '../components/BalloonConfigForm.svelte';
 	import Spinner from '../components/layout/Spinner.svelte';
@@ -15,7 +15,10 @@
 		WindIcon
 	} from 'svelte-feather-icons';
 	import { celsiusToFahrenheit, knotsToMPH, metersToFeet } from '../helpers';
+	import { maidenheadToLatLng, strCoordinates } from '../models/coordinates';
+	import Dashboard from '../components/Dashboard.svelte';
 
+	
 	export let form;
 	/**
 	 * @type {import('../models/BalloonConfigFormData').BalloonConfigFormData}
@@ -34,6 +37,8 @@
 	let timerStroke = 'gray';
 
 	let balloonConfigLoaded = false;
+
+
 
 	function startTelemetryTimer() {
 		timerStroke = timerStroke === 'gray' ? 'blue' : 'gray';
@@ -67,6 +72,9 @@
 		}
 	});
 
+
+
+
 	onDestroy(() => {});
 </script>
 
@@ -84,19 +92,14 @@
 	</center>
 {:then}
 	{#if latestBalloonTelemetry.length > 0}
-		<div class="flex px-3 mt-4">
+		<div class="flex px-3 mt-4 flex-wrap-reverse md:flex-nowrap">
 			<div
 				class="flex flex-1 flex-col border-solid bg-gray-100 rounded-md shadow-md py-3 px-4 mr-3 text-s"
 			>
-				{#each latestBalloonTelemetry as telemetry}
-					<p>{telemetry.telemetryCallsign}</p>
-					<p>{telemetry.temperature}</p>
-					<p>{telemetry.lastUpdated}</p>
-					<p>{telemetry.gridSquare}</p>
-				{/each}
+			<Dashboard/>
 			</div>
 			<div class="flex flex-2 border-solid bg-gray-100 rounded-md shadow-md pb-4 px-4 text-s">
-				<div>
+				<div class="max-h-fit">
 					<h1 class="text-2xl my-2">Lastest Balloon Status</h1>
 					<mark class="bg-indigo-400 rounded-md py-1 px-2 text-white"
 						>@ {latestBalloonTelemetry[0].lastUpdated}</mark
@@ -125,10 +128,10 @@
 						>
 					</div>
 					<div class="flex py-1">
-						
-							<MapPinIcon size="24" /><strong class="px-3"
-								>{latestBalloonTelemetry[0].gridSquare}</strong
-							
+						<MapPinIcon size="24" /><strong class="px-3"
+							>{latestBalloonTelemetry[0].gridSquare} - {strCoordinates(
+								maidenheadToLatLng(latestBalloonTelemetry[0].gridSquare ?? '')
+							)}</strong
 						>
 					</div>
 					{#if latestBalloonTelemetry[0].gpsStatus !== 1}
@@ -160,3 +163,7 @@
 {:catch error}
 	<p style="color: red">{error.message}</p>
 {/await}
+
+
+<style>
+</style>

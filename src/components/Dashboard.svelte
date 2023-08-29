@@ -1,10 +1,12 @@
 <script>
 	import { onMount, onDestroy, createEventDispatcher, afterUpdate } from 'svelte';
 	import { browser } from '$app/environment';
-	import { trackedBalloonsList } from '../stores';
+	import { balloonTelemetry } from '../stores';
 	import { maidenheadToLatLng } from '../models/coordinates';
 	import { Chart, registerables } from 'chart.js';
+	// @ts-ignore
 	import { createTelemetry } from '../models/telemetry';
+	// @ts-ignore
 	import { celsiusToFahrenheit, knotsToMPH, metersToFeet } from '../helpers';
 
 	Chart.register(...registerables);
@@ -54,7 +56,6 @@
 	 */
 	let balloonPath;
 
-	const dispatch = createEventDispatcher();
 
 	/**
 	 * @type {HTMLDivElement}
@@ -64,14 +65,6 @@
 	 * @type {{ remove: () => void; }}
 	 */
 	let map;
-	/**
-	 * @type {string}
-	 */
-	export let historicalTelemetryId;
-	/**
-	 * @type {import('../models/HistoricalTelemetry').HistoricalTelemetry}
-	 */
-	let historicalTelemetry;
 
 	/**
 	 * @type {Chart<"line", (number | null)[], string | undefined>}
@@ -98,18 +91,19 @@
 	 */
 	let balloonTrackPoints = [];
 
-	trackedBalloonsList.subscribe((balloons) => {
-		let match = balloons.find((balloon) => balloon.id === historicalTelemetryId);
-		if (match) {
-			historicalTelemetry = match;
-		} else {
-			console.log('telemetryId mismatch -- something stupid happened');
-		}
+
+	/**
+	 * @type {Array<import('../models/telemetry').Telemetry>}
+	 */
+	let latestBalloonTelemetry;
+	balloonTelemetry.subscribe((value) => {
+		latestBalloonTelemetry = value;
 	});
+	
 
 	afterUpdate(() => {
-		if (historicalTelemetry && historicalTelemetry.telemetrySpots) {
-			const latestTelemetry = historicalTelemetry.telemetrySpots.slice(-1)[0];
+		if (latestBalloonTelemetry) {
+			const latestTelemetry = latestBalloonTelemetry[0];
 
 			if (latestTelemetry) {
 				if (altitudeChartInstance) {
@@ -120,7 +114,7 @@
 					) {
 						altitudeChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
 						altitudeChartInstance.data.datasets[0].data.push(
-							metersToFeet(latestTelemetry.altitude)
+							latestTelemetry.altitude ?? 0
 						);
 						altitudeChartInstance.update();
 					}
@@ -144,6 +138,7 @@
 						)
 					) {
 					speedChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
+					// @ts-ignore
 					speedChartInstance.data.datasets[0].data.push(knotsToMPH(latestTelemetry.speed) 
 					);
 					speedChartInstance.update();
@@ -156,12 +151,14 @@
 						)
 					) {
 						temperatureChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
+						// @ts-ignore
 						temperatureChartInstance.data.datasets[0].data.push(celsiusToFahrenheit(latestTelemetry.temperature));
 						temperatureChartInstance.update();
 					}
 					}
 					if (map && latestTelemetry.gridSquare && balloonPath) {
 						let coords = maidenheadToLatLng(latestTelemetry.gridSquare);
+						// @ts-ignore
 						balloonPath.addLatLng([coords.latitude, coords.longitude]);
 						balloonPath.addTo(map);
 					}
@@ -169,9 +166,11 @@
 			}
 		}
 	});
+	
 
 	onMount(async () => {
 		if (browser) {
+			// @ts-ignore
 			const leaflet = await import('leaflet');
 
 			map = leaflet.map(mapElement).setView([50, -70], 3);
@@ -186,7 +185,7 @@
 				)
 				.addTo(map);
 
-			historicalTelemetry.telemetrySpots.forEach((record) => {
+				latestBalloonTelemetry.forEach((record) => {
 				if (record.gridSquare) {
 					let coords = maidenheadToLatLng(record.gridSquare);
 					balloonTrackPoints.push([coords.latitude, coords.longitude]);
@@ -200,14 +199,16 @@
 			altitudeChartInstance = new Chart(altitudeChart, {
 				type: 'line',
 				data: {
-					labels: historicalTelemetry.telemetrySpots.map((l) => l.lastUpdated?.toString()),
+					labels: latestBalloonTelemetry.map((l) => l.lastUpdated?.toString()),
 					datasets: [
 						{
 							label: 'Altitude (Feet)',
-							data: historicalTelemetry.telemetrySpots.map((l) =>
+							data: latestBalloonTelemetry.map((l) =>
 								l.altitude ? l.altitude * 3.28084 : l.altitude
 							),
-							borderWidth: 1
+							borderWidth: 1,
+							borderColor: 'rgb(75, 192, 192)',
+							backgroundColor: 'rgb(300,300,300)'
 						}
 					]
 				},
@@ -224,11 +225,11 @@
 			powerChartInstance = new Chart(powerChart, {
 				type: 'bar',
 				data: {
-					labels: historicalTelemetry.telemetrySpots.map((l) => l.lastUpdated?.toString()),
+					labels: latestBalloonTelemetry.map((l) => l.lastUpdated?.toString()),
 					datasets: [
 						{
 							label: 'Power (V)',
-							data: historicalTelemetry.telemetrySpots.map((l) => l.battery),
+							data: latestBalloonTelemetry.map((l) => l.battery),
 							borderWidth: 1
 						}
 					]
@@ -246,11 +247,11 @@
 		speedChartInstance = new Chart(speedsChart, {
 			type: 'line',
 			data: {
-				labels: historicalTelemetry.telemetrySpots.map((l) => l.lastUpdated?.toString()),
+				labels: latestBalloonTelemetry.map((l) => l.lastUpdated?.toString()),
 				datasets: [
 					{
 						label: 'Speed (MPH)',
-						data: historicalTelemetry.telemetrySpots.map((l) =>
+						data: latestBalloonTelemetry.map((l) =>
 							l.speed ? l.speed * 1.15078 : l.speed
 						),
 						borderWidth: 1
@@ -269,11 +270,11 @@
 		temperatureChartInstance = new Chart(temperaturesChart, {
 			type: 'line',
 			data: {
-				labels: historicalTelemetry.telemetrySpots.map((l) => l.lastUpdated?.toString()),
+				labels: latestBalloonTelemetry.map((l) => l.lastUpdated?.toString()),
 				datasets: [
 					{
 						label: 'Temperature (F)',
-						data: historicalTelemetry.telemetrySpots.map((l) =>
+						data: latestBalloonTelemetry.map((l) =>
 							l.temperature ? (l.temperature * 9) / 5 + 32 : l.temperature
 						),
 						borderWidth: 1
@@ -288,21 +289,21 @@
 				}
 			}
 		});
-	});
+	 });
 
 	onDestroy(async () => {
 		if (map) {
 			console.log('Unloading Leaflet map.');
 			map.remove();
 		}
-		altitudeChartInstance.destroy();
+		//altitudeChartInstance.destroy();
 	});
 
 </script>
 
 
-<div class="main">
-	<div id="map" bind:this={mapElement} />
+<div class="flex flex-col p-b6">
+	<div id="map" class="border-2 border-solid border-gray-400 rounded-md" bind:this={mapElement} />
 	<canvas bind:this={altitudeChart} />
 	<canvas bind:this={speedsChart} />
 	<canvas bind:this={powerChart} />
@@ -313,18 +314,11 @@
 <style>
 	@import 'leaflet/dist/leaflet.css';
 	#map {
-		height: 400px;
+		height: 500px;
 		width: 100%;
 	}
-	.main {
-		display: flex;
-		z-index: 9999;
-		flex-direction: column;
-		padding: 10px;
-	}
 
-	canvas {
-		max-height: 200px;
-	}
-
+ canvas{
+	max-height: 200px;
+ }
 </style>

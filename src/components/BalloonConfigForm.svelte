@@ -13,17 +13,15 @@
 	const dispatch = createEventDispatcher();
 
 	const handleToggleTimerClick = (event) => {
-		console.log(event.keyCode)
-		if (event.keyCode === 13) {
-			event.preventDefault();
-			event.stopPropagation();
-    	}
-		else{
 			dispatch('toggleTimerClicked', {});
-		}
 		
 	};
-
+	function keyDownReset (event) {
+		if (event.which == 13 || event.keyCode == 13) {
+			return false;
+		}
+		return true;
+};
 	
 
 	
@@ -41,7 +39,6 @@
 			<div class="pt-2 flex flex-col flex-1 px-2">
 				<label for="callsign">Callsign</label>
 				<input
-					on:keydown={handleToggleTimerClick}
 					value={form?.formData.callsign ?? ''}
 					type="text"
 					name="callsign"
@@ -53,7 +50,7 @@
 			</div>
 			<div class="pt-2 flex flex-col flex-1 px-2">
 				<label for="callsign">Telemetry Call Format</label>
-				<input on:keydown={handleToggleTimerClick}
+				<input 
 					value={form?.formData.telCallFormat ?? ''}
 					type="text"
 					name="telCallFormat"
@@ -83,7 +80,7 @@
 			</div>
 			<div class="pt-2 px-2 flex flex-col flex-1">
 				<label for="startDate">Telemetry Start Date</label>
-				<input on:keydown={handleToggleTimerClick}
+				<input 
 					value={form?.formData.startDate.toISOString().slice(0, 10) ??
 						new Date().toISOString().slice(0, 10)}
 					type="date"
@@ -96,7 +93,18 @@
 			</div>
 		</div>
 		<div class="flex flex-wrap justify-end pb-3 px-1 mx-4 pt-3 s:pt-0">
-			<div>
+				<div>
+					<button
+						class="rounded-md border-2 border-solid border-gray-300 px-2 m-1 transition ease-in-out hover:bg-slate-200 duration-300"
+						>Start Tracking</button
+					>
+				</div>
+				<form action="?/w1nrg" method="POST">
+					<button
+						class="rounded-md border-2 border-solid border-gray-300 px-2 m-1 transition ease-in-out hover:bg-slate-200 duration-300"
+						>W1NRG🎈</button
+					>
+				</form>
 				{#if balloonConfigLoaded}
 				<button
 					class:bg-blue-200={timerStroke === 'blue'}
@@ -121,20 +129,8 @@
 				</button>
 				{/if}
 			</div>
-			<form action="?/w1nrg" method="POST">
-				<button
-					class="rounded-md border-2 border-solid border-gray-300 px-2 m-1 transition ease-in-out hover:bg-slate-200 duration-300"
-					>W1NRG🎈</button
-				>
-			</form>
-			<div>
-				<button
-					class="rounded-md border-2 border-solid border-gray-300 px-2 m-1 transition ease-in-out hover:bg-slate-200 duration-300"
-					>Start Tracking</button
-				>
-			</div>
+			
 		</div>
-	</div>
 </form>
 
 <style>
