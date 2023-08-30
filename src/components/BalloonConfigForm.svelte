@@ -65,9 +65,6 @@
 				<input
 					value={form?.formData.slotId ?? 0}
 					step="2"
-					on:keydown|preventDefault={() => {
-						return false;
-					}}
 					max="8"
 					min="0"
 					type="number"

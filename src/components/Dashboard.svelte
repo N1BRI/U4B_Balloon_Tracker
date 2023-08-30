@@ -207,8 +207,6 @@
 								l.altitude ? l.altitude * 3.28084 : l.altitude
 							),
 							borderWidth: 1,
-							borderColor: 'rgb(75, 192, 192)',
-							backgroundColor: 'rgb(300,300,300)'
 						}
 					]
 				},
