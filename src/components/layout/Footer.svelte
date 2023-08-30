@@ -11,3 +11,8 @@
 </footer>
 
 
+<style>
+	footer{
+		z-index: 5999;
+	}
+</style>

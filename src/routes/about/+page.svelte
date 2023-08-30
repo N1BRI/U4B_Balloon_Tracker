@@ -2,4 +2,4 @@
     import "../../app.css";
 </script>
 
-<h1 class="text-xl">About</h1>
+<center><h1 class="text-xl">Comming soon</h1></center>

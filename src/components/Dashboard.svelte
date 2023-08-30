@@ -302,7 +302,7 @@
 </script>
 
 
-<div class="flex flex-col p-b6">
+<div class="flex flex-col p-b6 mb-20">
 	<div id="map" class="border-2 border-solid border-gray-400 rounded-md" bind:this={mapElement} />
 	<canvas bind:this={altitudeChart} />
 	<canvas bind:this={speedsChart} />
