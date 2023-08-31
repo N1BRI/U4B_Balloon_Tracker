@@ -26,7 +26,7 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
     let url = encodeURIComponent(
         `WITH standardWspr AS (
             SELECT tx_sign, tx_loc, rx_sign, time, DATE_ADD(time, INTERVAL 2 MINUTE) time_tel, power,
-                   ROW_NUMBER() OVER (PARTITION BY time ORDER BY time DESC) AS row_num
+                   ROW_NUMBER() OVER (PARTITION BY time ORDER BY time asc) AS row_num
             FROM wspr.rx
             WHERE tx_sign = '${callsign}'
             AND CAST(EXTRACT(minute FROM time) AS VARCHAR2) LIKE '%${slotId}'
@@ -61,7 +61,7 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
             FROM telemetryWspr
         ) AS t2
         ON t1.time_tel = t2.time AND t1.row_num = 1 AND t2.row_num = 1
-        ORDER BY t1.time DESC
+        ORDER BY t1.time asc
     `
     );
     if (limitQuery) {

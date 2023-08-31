@@ -11,26 +11,6 @@
 
 	Chart.register(...registerables);
 
-	// const addDataTest = () => {
-	// 	let t = createTelemetry();
-	// 	t.altitude = 80;
-	// 	t.battery = 4;
-	// 	t.gpsStatus = 1;
-	// 	t.speed = 50;
-	// 	t.temperature = 42;
-	// 	t.gridSquare = 'FN27oj';
-	// 	t.lastUpdated = new Date();
-	// 	trackedBalloonsList.update((balloons) => {
-	// 		const index = balloons.findIndex((balloon) => balloon.id === historicalTelemetryId);
-	// 		if (index !== -1) {
-	// 			if (!balloons[index].telemetrySpots.find((r) => r.lastUpdated === t.lastUpdated)) {
-	// 				balloons[index].telemetrySpots.push(t);
-	// 			}
-	// 		}
-	// 		console.log(historicalTelemetry);
-	// 		return balloons;
-	// 	});
-	// };
 	/**
 	 * @type{HTMLCanvasElement}
 	 */
@@ -61,8 +41,9 @@
 	 * @type {HTMLDivElement}
 	 */
 	let mapElement;
+
 	/**
-	 * @type {{ remove: () => void; }}
+	 * @type {{ setView?: any; remove: any; }}
 	 */
 	let map;
 
@@ -101,9 +82,21 @@
 	});
 	
 
-	afterUpdate(() => {
+	 afterUpdate(async() => {
+		let coords;
+		const leaflet = await import('leaflet');
+		if (latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare != null){
+				// @ts-ignore
+				let latLang = maidenheadToLatLng(latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare) 
+				coords = [latLang.latitude, latLang.longitude];
+			}
+			else{
+				coords = [50, -70]
+			}
+			// @ts-ignore
+			map.setView(coords, 6);
 		if (latestBalloonTelemetry) {
-			const latestTelemetry = latestBalloonTelemetry[0];
+			const latestTelemetry = latestBalloonTelemetry[latestBalloonTelemetry.length -1];
 
 			if (latestTelemetry) {
 				if (altitudeChartInstance) {
@@ -172,8 +165,16 @@
 		if (browser) {
 			// @ts-ignore
 			const leaflet = await import('leaflet');
-
-			map = leaflet.map(mapElement).setView([50, -70], 3);
+			let coords;
+			if (latestBalloonTelemetry[0]?.gridSquare != null){
+				let latLang = maidenheadToLatLng(latestBalloonTelemetry[0]?.gridSquare) 
+				coords = [latLang.latitude, latLang.longitude];
+			}
+			else{
+				coords = [50, -70]
+			}
+			console.log(coords)
+			map = leaflet.map(mapElement).setView(coords, 6);
 
 			leaflet
 				.tileLayer(

@@ -17,6 +17,7 @@
 	import { celsiusToFahrenheit, knotsToMPH, metersToFeet } from '../helpers';
 	import { maidenheadToLatLng, strCoordinates } from '../models/coordinates';
 	import Dashboard from '../components/Dashboard.svelte';
+	import { createTelemetry } from '../models/telemetry';
 
 	
 	export let form;
@@ -47,10 +48,25 @@
 			telemetryTimerId = null;
 		} else {
 			telemetryTimerId = setInterval(() => {
-				promise = getTelemetryData(configData, historicalQueryRan);
+				promise = addDataTest()//getTelemetryData(configData, historicalQueryRan);
 			}, 20000);
 		}
 	}
+
+	 async function addDataTest() {
+		let t = createTelemetry();
+		t.altitude = 80;
+		t.battery = 4;
+		t.gpsStatus = 1;
+		t.speed = 50;
+		t.temperature = 42;
+		t.gridSquare = 'JO30tp';
+		t.lastUpdated = new Date();
+		console.log(t)
+		balloonTelemetry.update((telemetry) => [...telemetry, t] );
+
+	};
+
 	/**
 	 * @type {Array<import('../models/telemetry').Telemetry>}
 	 */

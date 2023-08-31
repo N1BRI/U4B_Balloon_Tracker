@@ -16,6 +16,7 @@
 			dispatch('toggleTimerClicked', {});
 		
 	};
+
 	function keyDownReset (event) {
 		if (event.which == 13 || event.keyCode == 13) {
 			return false;
