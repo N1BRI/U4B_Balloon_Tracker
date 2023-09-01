@@ -108,9 +108,9 @@
 	</center>
 {:then}
 	{#if latestBalloonTelemetry.length > 0}
-		<div class="flex px-3 mt-4 flex-wrap-reverse md:flex-nowrap md:px-7">
+		<div class="flex px-1 mt-4 flex-wrap-reverse md:flex-nowrap md:px-7">
 			<div
-				class="flex flex-1 md:flex-1  flex-col border-solid bg-gray-100 rounded-md shadow-md py-3 md:mr-4 px-10 text-s"
+				class="flex flex-1 md:flex-1  flex-col border-solid bg-gray-100 rounded-md shadow-md py-3 md:mr-4 px-4 text-s"
 			>
 			<Dashboard/>
 			</div>
