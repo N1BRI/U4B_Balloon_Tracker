@@ -36,7 +36,6 @@
 	 */
 	let balloonPath;
 
-
 	/**
 	 * @type {HTMLDivElement}
 	 */
@@ -72,7 +71,6 @@
 	 */
 	let balloonTrackPoints = [];
 
-
 	/**
 	 * @type {Array<import('../models/telemetry').Telemetry>}
 	 */
@@ -80,23 +78,26 @@
 	balloonTelemetry.subscribe((value) => {
 		latestBalloonTelemetry = value;
 	});
-	
 
-	 afterUpdate(async() => {
+	afterUpdate(async () => {
 		let coords;
 		const leaflet = await import('leaflet');
-		if (latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare != null){
-				// @ts-ignore
-				let latLang = maidenheadToLatLng(latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare) 
-				coords = [latLang.latitude, latLang.longitude];
-			}
-			else{
-				coords = [50, -70]
-			}
+		if (latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare != null) {
 			// @ts-ignore
+			let latLang = maidenheadToLatLng(
+				latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare
+			);
+			coords = [latLang.latitude, latLang.longitude];
+		} else {
+			coords = [50, -70];
+		}
+		// @ts-ignore
+		try {
 			map.setView(coords, 6);
+		} catch {}
+
 		if (latestBalloonTelemetry) {
-			const latestTelemetry = latestBalloonTelemetry[latestBalloonTelemetry.length -1];
+			const latestTelemetry = latestBalloonTelemetry[latestBalloonTelemetry.length - 1];
 
 			if (latestTelemetry) {
 				if (altitudeChartInstance) {
@@ -106,9 +107,7 @@
 						)
 					) {
 						altitudeChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
-						altitudeChartInstance.data.datasets[0].data.push(
-							latestTelemetry.altitude ?? 0
-						);
+						altitudeChartInstance.data.datasets[0].data.push(latestTelemetry.altitude ?? 0);
 						altitudeChartInstance.update();
 					}
 				}
@@ -119,9 +118,9 @@
 							(l) => l === latestTelemetry.lastUpdated?.toString()
 						)
 					) {
-					powerChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
-					powerChartInstance.data.datasets[0].data.push(latestTelemetry.battery);
-					powerChartInstance.update();
+						powerChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
+						powerChartInstance.data.datasets[0].data.push(latestTelemetry.battery);
+						powerChartInstance.update();
 					}
 				}
 				if (speedChartInstance) {
@@ -130,24 +129,27 @@
 							(l) => l === latestTelemetry.lastUpdated?.toString()
 						)
 					) {
-					speedChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
-					// @ts-ignore
-					speedChartInstance.data.datasets[0].data.push(knotsToMPH(latestTelemetry.speed) 
-					);
-					speedChartInstance.update();
+						speedChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
+						// @ts-ignore
+						speedChartInstance.data.datasets[0].data.push(knotsToMPH(latestTelemetry.speed));
+						speedChartInstance.update();
 					}
 
 					if (temperatureChartInstance) {
 						if (
-						!temperatureChartInstance.data.labels?.find(
-							(l) => l === latestTelemetry.lastUpdated?.toString()
-						)
-					) {
-						temperatureChartInstance?.data?.labels?.push(latestTelemetry?.lastUpdated?.toString());
-						// @ts-ignore
-						temperatureChartInstance.data.datasets[0].data.push(celsiusToFahrenheit(latestTelemetry.temperature));
-						temperatureChartInstance.update();
-					}
+							!temperatureChartInstance.data.labels?.find(
+								(l) => l === latestTelemetry.lastUpdated?.toString()
+							)
+						) {
+							temperatureChartInstance?.data?.labels?.push(
+								latestTelemetry?.lastUpdated?.toString()
+							);
+							// @ts-ignore
+							temperatureChartInstance.data.datasets[0].data.push(
+								celsiusToFahrenheit(latestTelemetry.temperature)
+							);
+							temperatureChartInstance.update();
+						}
 					}
 					if (map && latestTelemetry.gridSquare && balloonPath) {
 						let coords = maidenheadToLatLng(latestTelemetry.gridSquare);
@@ -159,21 +161,19 @@
 			}
 		}
 	});
-	
 
 	onMount(async () => {
 		if (browser) {
 			// @ts-ignore
 			const leaflet = await import('leaflet');
 			let coords;
-			if (latestBalloonTelemetry[0]?.gridSquare != null){
-				let latLang = maidenheadToLatLng(latestBalloonTelemetry[0]?.gridSquare) 
+			if (latestBalloonTelemetry[0]?.gridSquare != null) {
+				let latLang = maidenheadToLatLng(latestBalloonTelemetry[0]?.gridSquare);
 				coords = [latLang.latitude, latLang.longitude];
+			} else {
+				coords = [50, -70];
 			}
-			else{
-				coords = [50, -70]
-			}
-			console.log(coords)
+			console.log(coords);
 			map = leaflet.map(mapElement).setView(coords, 6);
 
 			leaflet
@@ -186,7 +186,7 @@
 				)
 				.addTo(map);
 
-				latestBalloonTelemetry.forEach((record) => {
+			latestBalloonTelemetry.forEach((record) => {
 				if (record.gridSquare) {
 					let coords = maidenheadToLatLng(record.gridSquare);
 					balloonTrackPoints.push([coords.latitude, coords.longitude]);
@@ -207,12 +207,22 @@
 							data: latestBalloonTelemetry.map((l) =>
 								l.altitude ? l.altitude * 3.28084 : l.altitude
 							),
-							borderWidth: 1,
+							borderWidth: 1
 						}
 					]
 				},
 				options: {
 					scales: {
+						x: 
+							{
+								ticks: {
+									maxTicksLimit: 6,
+									font:{
+										size: 10
+									}
+								}
+							}
+						,
 						y: {
 							beginAtZero: true
 						}
@@ -235,6 +245,17 @@
 				},
 				options: {
 					scales: {
+						x: 
+							{
+								ticks: {
+									maxTicksLimit: 6,
+									font:{
+										size: 10
+									}
+								}
+							}
+						,
+						
 						y: {
 							min: 3,
 							max: 6
@@ -250,15 +271,23 @@
 				datasets: [
 					{
 						label: 'Speed (MPH)',
-						data: latestBalloonTelemetry.map((l) =>
-							l.speed ? l.speed * 1.15078 : l.speed
-						),
+						data: latestBalloonTelemetry.map((l) => (l.speed ? l.speed * 1.15078 : l.speed)),
 						borderWidth: 1
 					}
 				]
 			},
 			options: {
 				scales: {
+					x: 
+							{
+								ticks: {
+									maxTicksLimit: 6,
+									font:{
+										size: 10
+									}
+								}
+							}
+						,
 					y: {
 						beginAtZero: true
 					}
@@ -282,13 +311,23 @@
 			},
 			options: {
 				scales: {
+					x: 
+							{
+								ticks: {
+									maxTicksLimit: 6,
+									font:{
+										size: 10
+									}
+								}
+							}
+						,
 					y: {
 						beginAtZero: true
 					}
 				}
 			}
 		});
-	 });
+	});
 
 	onDestroy(async () => {
 		if (map) {
@@ -297,27 +336,22 @@
 		}
 		//altitudeChartInstance.destroy();
 	});
-
 </script>
 
-
-<div class="flex flex-col p-b6 mb-20">
+<div class="flex flex-col mb-20">
 	<div id="map" class="border-2 border-solid border-gray-400 rounded-md" bind:this={mapElement} />
-	<canvas bind:this={altitudeChart} />
-	<canvas bind:this={speedsChart} />
-	<canvas bind:this={powerChart} />
-	<canvas bind:this={temperaturesChart} />
+	<canvas class="max-h-32" bind:this={altitudeChart} />
+	<canvas class="max-h-32" bind:this={speedsChart} />
+	<canvas class="max-h-32" bind:this={powerChart} />
+	<canvas class="max-h-32" bind:this={temperaturesChart} />
 	<!-- <button on:click={addDataTest}>Add d</button> -->
 </div>
 
 <style>
 	@import 'leaflet/dist/leaflet.css';
+
 	#map {
 		height: 500px;
-		width: 100%;
+		
 	}
-
- canvas{
-	max-height: 200px;
- }
 </style>

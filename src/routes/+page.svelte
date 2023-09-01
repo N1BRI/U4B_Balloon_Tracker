@@ -39,7 +39,7 @@
 
 	let balloonConfigLoaded = false;
 
-
+		const FIVE_MINUTES = 300000;
 
 	function startTelemetryTimer() {
 		timerStroke = timerStroke === 'gray' ? 'blue' : 'gray';
@@ -48,24 +48,24 @@
 			telemetryTimerId = null;
 		} else {
 			telemetryTimerId = setInterval(() => {
-				promise = addDataTest()//getTelemetryData(configData, historicalQueryRan);
-			}, 20000);
+				promise = getTelemetryData(configData, historicalQueryRan);
+			}, FIVE_MINUTES);
 		}
 	}
 
-	 async function addDataTest() {
-		let t = createTelemetry();
-		t.altitude = 80;
-		t.battery = 4;
-		t.gpsStatus = 1;
-		t.speed = 50;
-		t.temperature = 42;
-		t.gridSquare = 'JO30tp';
-		t.lastUpdated = new Date();
-		console.log(t)
-		balloonTelemetry.update((telemetry) => [...telemetry, t] );
+	//  async function addDataTest() {
+	// 	let t = createTelemetry();
+	// 	t.altitude = 80;
+	// 	t.battery = 4;
+	// 	t.gpsStatus = 1;
+	// 	t.speed = 50;
+	// 	t.temperature = 42;
+	// 	t.gridSquare = 'EM95qe';
+	// 	t.lastUpdated = new Date();
+	// 	console.log(t)
+	// 	balloonTelemetry.update((telemetry) => [...telemetry, t] );
 
-	};
+	// };
 
 	/**
 	 * @type {Array<import('../models/telemetry').Telemetry>}
@@ -110,7 +110,7 @@
 	{#if latestBalloonTelemetry.length > 0}
 		<div class="flex px-3 mt-4 flex-wrap-reverse md:flex-nowrap md:px-7">
 			<div
-				class="flex flex-1 md:flex-1  flex-col border-solid bg-gray-100 rounded-md shadow-md py-3 md:mr-4 px-4 text-s"
+				class="flex flex-1 md:flex-1  flex-col border-solid bg-gray-100 rounded-md shadow-md py-3 md:mr-4 px-10 text-s"
 			>
 			<Dashboard/>
 			</div>

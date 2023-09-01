@@ -39,12 +39,13 @@
 		<div class="flex flex-wrap flex-1 mx-4 lg:max-h-16">
 			<div class="pt-2 flex flex-col flex-1 px-2">
 				<label for="callsign">Callsign</label>
-				<input
+				
+				<input 
 					value={form?.formData.callsign ?? ''}
 					type="text"
 					name="callsign"
 					class="px-2 rounded-md border-2 border-solid border-gray-300  max-w-none"
-				/>
+					/>
 				{#if form?.errors?.callsign}
 					<small class="text-red-600">{form?.errors?.callsign}</small>
 				{/if}
@@ -129,6 +130,7 @@
 			</div>
 			
 		</div>
+		<span class="p-1">Need a U4B? Check out <a href="https://qrp-labs.com/u4b" target="_blank" class="underline">QRP-Labs</a></span>
 </form>
 
 <style>
