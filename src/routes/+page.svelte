@@ -4,7 +4,7 @@
 	import BalloonConfigForm from '../components/BalloonConfigForm.svelte';
 	import Spinner from '../components/layout/Spinner.svelte';
 	import { balloonTelemetry } from '../stores';
-	import { getTelemetryData } from '../queries';
+	import { getLatestSpots, getTelemetryData } from '../queries';
 	import {
 		ThermometerIcon,
 		BatteryChargingIcon,
@@ -17,7 +17,6 @@
 	import { celsiusToFahrenheit, knotsToMPH, metersToFeet } from '../helpers';
 	import { maidenheadToLatLng, strCoordinates } from '../models/coordinates';
 	import Dashboard from '../components/Dashboard.svelte';
-	import { createTelemetry } from '../models/telemetry';
 
 	
 	export let form;
@@ -29,7 +28,12 @@
 	/**
 	 * @type {Promise<void>}
 	 */
-	let promise;
+	let latestTelemetryPromise;
+
+	/**
+	 * @type {Promise<import('../models/wsprSpot').wsprSpot[]>}
+	 */
+	let latestSpotsPromise;
 	/**
 	 * @type {string | number | NodeJS.Timeout | undefined | null}
 	 */
@@ -48,7 +52,7 @@
 			telemetryTimerId = null;
 		} else {
 			telemetryTimerId = setInterval(() => {
-				promise = getTelemetryData(configData, historicalQueryRan);
+				latestTelemetryPromise = getTelemetryData(configData, historicalQueryRan);
 			}, FIVE_MINUTES);
 		}
 	}
@@ -79,7 +83,8 @@
 		balloonTelemetry.set([]);
 		if (form?.success) {
 			configData = form.formData;
-			promise = getTelemetryData(configData, historicalQueryRan);
+			latestTelemetryPromise = getTelemetryData(configData, historicalQueryRan);
+			//latestSpotsPromise = getLatestSpots(configData.callsign, configData.startDate);
 			balloonConfigLoaded = true;
 			historicalQueryRan = true;
 			startTelemetryTimer();
@@ -101,7 +106,7 @@
 	on:toggleTimerClicked={startTelemetryTimer}
 />
 
-{#await promise}
+{#await latestTelemetryPromise}
 	<center>
 		<Spinner />
 		<p>...fetching latest telemetry data</p>
@@ -113,44 +118,59 @@
 				class="flex flex-1 md:flex-1  flex-col border-solid bg-gray-100 rounded-md shadow-md py-3 md:mr-4 px-4 text-s"
 			>
 			<Dashboard/>
+			<!-- {#await latestSpotsPromise}
+			<center>
+				<Spinner />
+				<p>...fetching latest spots</p>
+			</center>
+				
+			{:then spots} 
+				{#each spots as spot}
+					<span>{spot.rx_sign} </span>
+					<span>{spot.spot_power} </span>
+					<span>{spot.spot_rx_loc} </span>
+					<span>{spot.spot_snr} </span>
+					<span>{spot.spot_time} </span>
+					<span>{spot.spot_tx_loc} </span>
+				{/each}
+				
+			{/await} -->
 			</div>
 			<div class="flex flex-1 md:flex-none md:w-70 md:flex-2 border-solid mb-6 md:mb-0 bg-gray-100 rounded-md shadow-md pb-4 px-4 text-s self-start">
 				<div class="max-h-fit">
 					<h1 class="text-2xl my-2">Lastest Balloon Status</h1>
 					<mark class="bg-indigo-400 rounded-md py-1 px-2 text-white"
-						>@ {latestBalloonTelemetry[0].lastUpdated}</mark
+						>@ {latestBalloonTelemetry[latestBalloonTelemetry.length - 1].lastUpdated}</mark
 					>
 					<div class="flex py-1">
 						<BatteryChargingIcon size="24" />
 						<strong class="px-3"
-							>{latestBalloonTelemetry[0].battery == null
-								? 0.0
-								: latestBalloonTelemetry[0].battery.toFixed(3)} Volts</strong
+							>{latestBalloonTelemetry[latestBalloonTelemetry.length - 1].battery.toFixed(3)} Volts</strong
 						>
 					</div>
 					<div class="flex py-1">
 						<ThermometerIcon size="24" /><strong class="px-3"
-							>{celsiusToFahrenheit(latestBalloonTelemetry[0].temperature)} °F</strong
+							>{celsiusToFahrenheit(latestBalloonTelemetry[latestBalloonTelemetry.length - 1].temperature)} °F</strong
 						>
 					</div>
 					<div class="flex py-1">
 						<TrendingUpIcon size="24" /><strong class="px-3"
-							>{metersToFeet(latestBalloonTelemetry[0].altitude)} Feet</strong
+							>{metersToFeet(latestBalloonTelemetry[latestBalloonTelemetry.length - 1].altitude)} Feet</strong
 						>
 					</div>
 					<div class="flex py-1">
 						<WindIcon size="24" /><strong class="px-3"
-							>{knotsToMPH(latestBalloonTelemetry[0].speed)} MPH</strong
+							>{knotsToMPH(latestBalloonTelemetry[latestBalloonTelemetry.length - 1].speed)} MPH</strong
 						>
 					</div>
 					<div class="flex py-1">
 						<MapPinIcon size="24" /><strong class="px-3"
 							>{latestBalloonTelemetry[0].gridSquare} - {strCoordinates(
-								maidenheadToLatLng(latestBalloonTelemetry[0].gridSquare ?? '')
+								maidenheadToLatLng(latestBalloonTelemetry[latestBalloonTelemetry.length - 1].gridSquare ?? '')
 							)}</strong
 						>
 					</div>
-					{#if latestBalloonTelemetry[0].gpsStatus !== 1}
+					{#if latestBalloonTelemetry[latestBalloonTelemetry.length - 1].gpsStatus !== 1}
 						<div class="flex py-1 text-red-500">
 							<AlertCircleIcon size="24" /><strong class="px-3">GPS Not Connected</strong>
 						</div>
@@ -161,7 +181,7 @@
 							>
 						</div>
 					{/if}
-					{#if latestBalloonTelemetry[0].satsStatus !== 1}
+					{#if latestBalloonTelemetry[latestBalloonTelemetry.length - 1].satsStatus !== 1}
 						<div class="flex py-1 text-red-500">
 							<AlertCircleIcon size="24" /><strong class="px-3">Sats Not Connected</strong>
 						</div>

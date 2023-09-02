@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { createTelemetry } from './models/telemetry';
 import { decodeTelemetry } from './U4B';
 import { balloonTelemetry } from './stores';
+import { createWsprSpot } from './models/wsprSpot';
 
 
 
@@ -117,7 +118,7 @@ export async function getTelemetryData(configData, isLimitedQuery = false) {
                     if (!isLimitedQuery) {
                         balloonTelemetry.update((telemetry) => [...telemetry, newTelemetry]);
                     }
-                    else if(lastTelemetryTime != null && lastTelemetryTime < newTelemetry.lastUpdated){
+                    else if (lastTelemetryTime != null && lastTelemetryTime < newTelemetry.lastUpdated) {
                         balloonTelemetry.update((telemetry) => [...telemetry, newTelemetry]);
                     }
                 }
@@ -129,4 +130,49 @@ export async function getTelemetryData(configData, isLimitedQuery = false) {
 }
 
 
+/**
+* @param {string} callsign
+* @param {Date | null } lastUpdatedTime
+*/
+export function buildSpotsQuery(callsign, lastUpdatedTime) {
+    if (lastUpdatedTime !== null) {
+        let lastUpdateString = format(lastUpdatedTime, 'yyyy-MM-dd HH:mm:ss')
+
+        return encodeURIComponent(`SELECT rx_sign, MAX(time) AS spot_time, MAX(power) as spot_power, MAX(snr) spot_snr, max(rx_loc) as spot_rx_loc, max(tx_loc) as spot_tx_loc
+        FROM wspr.rx
+        WHERE time >= '${lastUpdateString}'
+            AND tx_sign = '${callsign}'
+        GROUP BY rx_sign
+        order by spot_time desc`)
+    }
+}
+
+/**
+* @param {string} callsign
+* @param {Date | null } lastUpdatedTime
+*/
+export async function getLatestSpots(callsign, lastUpdatedTime) {
+    let url = `https://db1.wspr.live/?query=${buildSpotsQuery(
+        callsign, lastUpdatedTime)}+FORMAT+JSON`;
+    const res = await fetch(url);
+    const json = await res.json();
+    /** @type {Array<import("./models/wsprSpot").wsprSpot>} */
+    let spots = [];
+    if (res.ok) {
+        if (json.data.length > 0) {
+            json.data.forEach( (/** @type {import("./models/wsprSpot").wsprSpot} */ record) => {
+                let spot = createWsprSpot();
+                spot.rx_sign = record.rx_sign;
+                spot.spot_power = record.spot_power;
+                spot.spot_rx_loc = record.spot_rx_loc
+                spot.spot_snr = record.spot_snr;
+                spot.spot_time = record.spot_time;
+                spot.spot_tx_loc = record.spot_tx_loc;
+                spots.push(spot);
+            }
+            )
+        }
+        return spots;
+    }
+}
 

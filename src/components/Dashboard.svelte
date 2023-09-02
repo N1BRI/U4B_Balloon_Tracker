@@ -4,9 +4,6 @@
 	import { balloonTelemetry } from '../stores';
 	import { maidenheadToLatLng } from '../models/coordinates';
 	import { Chart, registerables } from 'chart.js';
-	// @ts-ignore
-	import { createTelemetry } from '../models/telemetry';
-	// @ts-ignore
 	import { celsiusToFahrenheit, knotsToMPH, metersToFeet } from '../helpers';
 
 	Chart.register(...registerables);
@@ -52,7 +49,7 @@
 	let altitudeChartInstance;
 
 	/**
-	 * @type {Chart<"bar", (number | null)[], string | undefined>}
+	 * @type {Chart<"line", (number | null)[], string | undefined>}
 	 */
 	let powerChartInstance;
 
@@ -85,6 +82,7 @@
 		if (latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare != null) {
 			// @ts-ignore
 			let latLang = maidenheadToLatLng(
+				// @ts-ignore
 				latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare
 			);
 			coords = [latLang.latitude, latLang.longitude];
@@ -146,6 +144,7 @@
 							);
 							// @ts-ignore
 							temperatureChartInstance.data.datasets[0].data.push(
+								// @ts-ignore
 								celsiusToFahrenheit(latestTelemetry.temperature)
 							);
 							temperatureChartInstance.update();
@@ -232,7 +231,7 @@
 		}
 		if (powerChart) {
 			powerChartInstance = new Chart(powerChart, {
-				type: 'bar',
+				type: 'line',
 				data: {
 					labels: latestBalloonTelemetry.map((l) => l.lastUpdated?.toString()),
 					datasets: [

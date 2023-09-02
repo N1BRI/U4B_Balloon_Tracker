@@ -9,7 +9,7 @@ const w1nrg = {
         callsign: 'W1NRG',
         slotId: 6,
         telCallFormat: '1_6',
-        startDate: new Date('08/26/2023')
+        startDate: new Date('09/02/2023')
 }
 
 const balloonConfigSchema = z.object({
