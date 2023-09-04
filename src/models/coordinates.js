@@ -4,8 +4,9 @@
  * @returns {Coordinates}
  */
 export function maidenheadToLatLng(maidenhead) {
+  console.log(maidenhead)
   if (maidenhead.length !== 4 && maidenhead.length !== 6) {
-    throw new Error("Maidenhead locator must be 4 or 6 characters long.");
+    console.log(maidenhead)
   }
 
   const lonIndex1 = maidenhead.charCodeAt(0) - 65;

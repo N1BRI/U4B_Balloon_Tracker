@@ -124,6 +124,7 @@ export async function getTelemetryData(configData, isLimitedQuery = false) {
                     newTelemetry.lastUpdated = decodedTelemetry.lastUpdated;
                     newTelemetry.telemetryRxLocation = record.telemetry_rx_loc
 
+                   
                     let lastTelemetryTime = latestBalloonTelemetry[0]?.lastUpdated;
                     if (!isLimitedQuery) {
                         balloonTelemetry.update((telemetry) => [...telemetry, newTelemetry]);
@@ -137,7 +138,7 @@ export async function getTelemetryData(configData, isLimitedQuery = false) {
             );
         }
     }
-    getLatestSpots(configData.callsign, configData.startDate)
+    await getLatestSpots(configData.callsign, configData.startDate)
 }
 
 

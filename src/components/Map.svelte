@@ -63,25 +63,32 @@
 			coords = [latLang.latitude, latLang.longitude];
 		}
 
+// 		/**
+// 		 * @type {any[]}
+// 		 */
 		/**
 		 * @type {any[]}
 		 */
 		let telemSpots = [];
-		latestBalloonTelemetry.forEach((spot) => {
-			let coordsRx = maidenheadToLatLng(spot.telemetryRxLocation);
-			let coordsTx = maidenheadToLatLng(spot.gridSquare);
-			if (!isNaN(coordsRx.latitude) && !isNaN(coordsRx.longitude) &&
-			!isNaN(coordsTx.latitude) && !isNaN(coordsTx.longitude) ) {
-				//wsprSpots.push(leaflet.marker([coords.latitude, coords.longitude]).bindPopup(`${spot.rx_sign} : ${spot.spot_power}`));
-				telemSpots.push(
-					leaflet.Polyline.Arc([coordsRx.latitude, coordsRx.longitude], [coordsTx.latitude, coordsTx.longitude], {
-						color: 'green',
-						weight: 2,
-						vertices: 200
-					})
-				);
-			}
-		});
+// 		latestBalloonTelemetry.forEach((spot) => {
+// 			let coordsRx = maidenheadToLatLng(spot.telemetryRxLocation);
+// 			let coordsTx = maidenheadToLatLng(spot.gridSquare);
+// 			if (!isNaN(coordsRx.latitude) && !isNaN(coordsRx.longitude) &&
+// 			!isNaN(coordsTx.latitude) && !isNaN(coordsTx.longitude) ) {
+// 				console.log("coordsRx.latitude:", coordsRx.latitude);
+// console.log("coordsRx.longitude:", coordsRx.longitude);
+// console.log("coordsTx.latitude:", coordsTx.latitude);
+// console.log("coordsTx.longitude:", coordsTx.longitude);
+// 				//wsprSpots.push(leaflet.marker([coords.latitude, coords.longitude]).bindPopup(`${spot.rx_sign} : ${spot.spot_power}`));
+// 				telemSpots.push(
+// 					leaflet.Polyline.Arc([coordsRx.latitude, coordsRx.longitude], [coordsTx.latitude, coordsTx.longitude], {
+// 						color: 'green',
+// 						weight: 2,
+// 						vertices: 200
+// 					})
+// 				);
+// 			}
+// 		});
 
 		/**
 		 * @type {any[]}
@@ -89,17 +96,18 @@
 		 let wsprSpots = [];
 		latestWsprSpots.forEach((spot) => {
 			let coordsRx = maidenheadToLatLng(spot.spot_rx_loc);
-			let coordsTx = maidenheadToLatLng(latestBalloonTelemetry[Math.floor(latestBalloonTelemetry.length/2)].gridSquare);
+			let coordsTx = maidenheadToLatLng(latestBalloonTelemetry[Math.round(latestBalloonTelemetry.length/2)].gridSquare);
+			
 			if (!isNaN(coordsRx.latitude) && !isNaN(coordsRx.longitude) &&
 			!isNaN(coordsTx.latitude) && !isNaN(coordsTx.longitude) ) {
-				//wsprSpots.push(leaflet.marker([coords.latitude, coords.longitude]).bindPopup(`${spot.rx_sign} : ${spot.spot_power}`));
+				telemSpots.push(leaflet.marker([coordsRx.latitude, coordsRx.longitude]).bindPopup(`<strong>Reporter:</strong> ${spot.rx_sign} <br><strong>SNR:</strong> ${spot.spot_snr} <br><strong>Time:</strong> ${spot.spot_time}`));
 				wsprSpots.push(
 					leaflet.Polyline.Arc([coordsRx.latitude, coordsRx.longitude], [coordsTx.latitude, coordsTx.longitude], {
-						color: 'red',
+						color: 'rgb(20, 184, 166)',
 						weight: 2,
 						vertices: 200
 					})
-				);
+				)
 			}
 		});
 
@@ -126,7 +134,6 @@
 		};
 
 		var overlayMaps = {
-			TelemetrySpots: cc,
 			WSPRSpots: dd,
 			BalloonPath: balloonPath
 		};
