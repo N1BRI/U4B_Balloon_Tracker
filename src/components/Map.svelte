@@ -31,7 +31,15 @@
 	onMount(async () => {
 		let coords = [50, -70];
 		const leaflet = await import('leaflet');
+		const iconPath = '/img/leaflet/';
 		const leafletArc = await import('leaflet-arc');
+
+		
+		leaflet.Marker.prototype.options.icon = leaflet.icon({
+			iconRetinaUrl: `${iconPath}/marker-icon-2x.png`,
+			iconUrl: `${iconPath}/marker-icon.png`,
+			shadowUrl: `${iconPath}/marker-shadow.png`
+		});
 
 		var osm = leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			maxZoom: 19,
@@ -57,51 +65,67 @@
 			coords = [latLang.latitude, latLang.longitude];
 		}
 
-// 		/**
-// 		 * @type {any[]}
-// 		 */
+		// 		/**
+		// 		 * @type {any[]}
+		// 		 */
 		/**
 		 * @type {any[]}
 		 */
 		let telemSpots = [];
-// 		latestBalloonTelemetry.forEach((spot) => {
-// 			let coordsRx = maidenheadToLatLng(spot.telemetryRxLocation);
-// 			let coordsTx = maidenheadToLatLng(spot.gridSquare);
-// 			if (!isNaN(coordsRx.latitude) && !isNaN(coordsRx.longitude) &&
-// 			!isNaN(coordsTx.latitude) && !isNaN(coordsTx.longitude) ) {
-// 				console.log("coordsRx.latitude:", coordsRx.latitude);
-// console.log("coordsRx.longitude:", coordsRx.longitude);
-// console.log("coordsTx.latitude:", coordsTx.latitude);
-// console.log("coordsTx.longitude:", coordsTx.longitude);
-// 				//wsprSpots.push(leaflet.marker([coords.latitude, coords.longitude]).bindPopup(`${spot.rx_sign} : ${spot.spot_power}`));
-// 				telemSpots.push(
-// 					leaflet.Polyline.Arc([coordsRx.latitude, coordsRx.longitude], [coordsTx.latitude, coordsTx.longitude], {
-// 						color: 'green',
-// 						weight: 2,
-// 						vertices: 200
-// 					})
-// 				);
-// 			}
-// 		});
+		// 		latestBalloonTelemetry.forEach((spot) => {
+		// 			let coordsRx = maidenheadToLatLng(spot.telemetryRxLocation);
+		// 			let coordsTx = maidenheadToLatLng(spot.gridSquare);
+		// 			if (!isNaN(coordsRx.latitude) && !isNaN(coordsRx.longitude) &&
+		// 			!isNaN(coordsTx.latitude) && !isNaN(coordsTx.longitude) ) {
+		// 				console.log("coordsRx.latitude:", coordsRx.latitude);
+		// console.log("coordsRx.longitude:", coordsRx.longitude);
+		// console.log("coordsTx.latitude:", coordsTx.latitude);
+		// console.log("coordsTx.longitude:", coordsTx.longitude);
+		// 				//wsprSpots.push(leaflet.marker([coords.latitude, coords.longitude]).bindPopup(`${spot.rx_sign} : ${spot.spot_power}`));
+		// 				telemSpots.push(
+		// 					leaflet.Polyline.Arc([coordsRx.latitude, coordsRx.longitude], [coordsTx.latitude, coordsTx.longitude], {
+		// 						color: 'green',
+		// 						weight: 2,
+		// 						vertices: 200
+		// 					})
+		// 				);
+		// 			}
+		// 		});
 
 		/**
 		 * @type {any[]}
 		 */
-		 let wsprSpots = [];
+		let wsprSpots = [];
 		latestWsprSpots.forEach((spot) => {
 			let coordsRx = maidenheadToLatLng(spot.spot_rx_loc);
-			let coordsTx = maidenheadToLatLng(latestBalloonTelemetry[Math.round(latestBalloonTelemetry.length/2)].gridSquare);
-			
-			if (!isNaN(coordsRx.latitude) && !isNaN(coordsRx.longitude) &&
-			!isNaN(coordsTx.latitude) && !isNaN(coordsTx.longitude) ) {
-				wsprSpots.push(leaflet.marker([coordsRx.latitude, coordsRx.longitude]).bindPopup(`<strong>Reporter:</strong> ${spot.rx_sign} <br><strong>SNR:</strong> ${spot.spot_snr} <br><strong>Time:</strong> ${spot.spot_time}`));
+			let coordsTx = maidenheadToLatLng(
+				latestBalloonTelemetry[Math.round(latestBalloonTelemetry.length / 2)].gridSquare
+			);
+
+			if (
+				!isNaN(coordsRx.latitude) &&
+				!isNaN(coordsRx.longitude) &&
+				!isNaN(coordsTx.latitude) &&
+				!isNaN(coordsTx.longitude)
+			) {
 				wsprSpots.push(
-					leaflet.Polyline.Arc([coordsRx.latitude, coordsRx.longitude], [coordsTx.latitude, coordsTx.longitude], {
-						color: 'rgb(20, 184, 166)',
-						weight: 2,
-						vertices: 200
-					})
-				)
+					leaflet
+						.marker([coordsRx.latitude, coordsRx.longitude])
+						.bindPopup(
+							`<strong>Reporter:</strong> ${spot.rx_sign} <br><strong>SNR:</strong> ${spot.spot_snr} <br><strong>Time:</strong> ${spot.spot_time}`
+						)
+				);
+				wsprSpots.push(
+					leaflet.Polyline.Arc(
+						[coordsRx.latitude, coordsRx.longitude],
+						[coordsTx.latitude, coordsTx.longitude],
+						{
+							color: 'rgb(20, 184, 166)',
+							weight: 2,
+							vertices: 200
+						}
+					)
+				);
 			}
 		});
 
@@ -132,7 +156,6 @@
 
 		leaflet.control.layers(baseMaps, overlayMaps).addTo(map);
 	});
-
 </script>
 
 <div id="map" bind:this={mapElement} />
@@ -143,8 +166,4 @@
 		height: 400px;
 		width: 100%;
 	}
-
-	.leaflet-default-icon-path {
-    background-image: url(https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png);
-}
 </style>

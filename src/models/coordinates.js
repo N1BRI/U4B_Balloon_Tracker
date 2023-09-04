@@ -4,7 +4,6 @@
  * @returns {Coordinates}
  */
 export function maidenheadToLatLng(maidenhead) {
-  console.log(maidenhead)
   if (maidenhead.length !== 4 && maidenhead.length !== 6) {
     console.log(maidenhead)
   }
