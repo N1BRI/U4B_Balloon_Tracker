@@ -196,5 +196,4 @@
 
 
 <style>
-	@import 'leaflet/dist/leaflet.css';
 </style>

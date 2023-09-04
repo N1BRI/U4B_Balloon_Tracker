@@ -139,6 +139,7 @@
 
 <style>
 	@import 'leaflet/dist/leaflet.css';
+	@import 'leaflet/dist/images/marker-shadow.png';
 	#map {
 		height: 400px;
 		width: 100%;
