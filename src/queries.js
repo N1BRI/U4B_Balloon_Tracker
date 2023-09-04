@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { createTelemetry } from './models/telemetry';
 import { decodeTelemetry } from './U4B';
-import { balloonTelemetry } from './stores';
+import { balloonTelemetry, wsprSpots } from './stores';
 import { createWsprSpot } from './models/wsprSpot';
 
 
@@ -26,7 +26,7 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
     lastUpdateString = format(lastUpdatedTime, 'yyyy-MM-dd HH:mm:ss')
     let url = encodeURIComponent(
         `WITH standardWspr AS (
-            SELECT tx_sign, tx_loc, rx_sign, time, DATE_ADD(time, INTERVAL 2 MINUTE) time_tel, power,
+            SELECT tx_sign, tx_loc, rx_loc, rx_sign, time, DATE_ADD(time, INTERVAL 2 MINUTE) time_tel, power,
                    ROW_NUMBER() OVER (PARTITION BY time ORDER BY time asc) AS row_num
             FROM wspr.rx
             WHERE tx_sign = '${callsign}'
@@ -34,7 +34,7 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
             AND time >= '${lastUpdateString}'
         ),
         telemetryWspr AS (
-            SELECT tx_sign, tx_loc AS tel_loc, rx_sign, time, power,
+            SELECT tx_sign, tx_loc AS tel_loc, rx_loc, rx_sign, time, power,
                    ROW_NUMBER() OVER (PARTITION BY time ORDER BY time DESC) AS row_num
             FROM wspr.rx
             WHERE tx_sign LIKE '${formatMask}%'
@@ -44,7 +44,8 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
         SELECT t1.tx_sign as standard_tx_sign, 
         t2.tx_sign as telemetry_tx_sign, 
         t1.tx_loc as standard_tx_loc, 
-        t2.tel_loc AS telemetry_tx_loc, 
+        t2.tel_loc AS telemetry_tx_loc,
+        t2.rx_loc AS telemetry_rx_loc, 
         t1.rx_sign as standard_rx_sign, 
         t2.rx_sign as telemetry_rx_sign, 
         t1.time as standard_time,
@@ -52,12 +53,12 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
         t1.power as standard_power, 
         t2.power as telemetry_power
         FROM (
-            SELECT tx_sign, tx_loc, rx_sign, time, power, time_tel,
+            SELECT tx_sign, tx_loc, rx_loc, rx_sign, time, power, time_tel,
                    ROW_NUMBER() OVER (PARTITION BY time_tel ORDER BY time DESC) AS row_num
             FROM standardWspr
         ) AS t1
         JOIN (
-            SELECT tx_sign, tel_loc, rx_sign, time, power,
+            SELECT tx_sign, tel_loc, rx_loc, rx_sign, time, power,
                    ROW_NUMBER() OVER (PARTITION BY time ORDER BY time DESC) AS row_num
             FROM telemetryWspr
         ) AS t2
@@ -78,6 +79,14 @@ export function buildTelemetryQuery(callsign, slotId, formatMask, lastUpdatedTim
 let latestBalloonTelemetry;
 balloonTelemetry.subscribe((value) => {
     latestBalloonTelemetry = value;
+});
+
+/**
+ * @type {Array<import('./models/wsprSpot').wsprSpot>}
+ */
+let latestWsprSpots;
+wsprSpots.subscribe((value) => {
+    latestWsprSpots = value;
 });
 
 /**
@@ -113,6 +122,7 @@ export async function getTelemetryData(configData, isLimitedQuery = false) {
                     newTelemetry.gridSquare = record.standard_tx_loc + decodedTelemetry.telemetrySubsquare;
                     newTelemetry.lastReportedBy = decodedTelemetry.lastReportedBy;
                     newTelemetry.lastUpdated = decodedTelemetry.lastUpdated;
+                    newTelemetry.telemetryRxLocation = record.telemetry_rx_loc
 
                     let lastTelemetryTime = latestBalloonTelemetry[0]?.lastUpdated;
                     if (!isLimitedQuery) {
@@ -127,6 +137,7 @@ export async function getTelemetryData(configData, isLimitedQuery = false) {
             );
         }
     }
+    getLatestSpots(configData.callsign, configData.startDate)
 }
 
 
@@ -157,10 +168,9 @@ export async function getLatestSpots(callsign, lastUpdatedTime) {
     const res = await fetch(url);
     const json = await res.json();
     /** @type {Array<import("./models/wsprSpot").wsprSpot>} */
-    let spots = [];
     if (res.ok) {
         if (json.data.length > 0) {
-            json.data.forEach( (/** @type {import("./models/wsprSpot").wsprSpot} */ record) => {
+            json.data.forEach((/** @type {import("./models/wsprSpot").wsprSpot} */ record) => {
                 let spot = createWsprSpot();
                 spot.rx_sign = record.rx_sign;
                 spot.spot_power = record.spot_power;
@@ -168,11 +178,12 @@ export async function getLatestSpots(callsign, lastUpdatedTime) {
                 spot.spot_snr = record.spot_snr;
                 spot.spot_time = record.spot_time;
                 spot.spot_tx_loc = record.spot_tx_loc;
-                spots.push(spot);
+                wsprSpots.update((spots) => [...spots, spot]);
+
             }
             )
         }
-        return spots;
+
     }
 }
 

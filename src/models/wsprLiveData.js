@@ -10,6 +10,7 @@
  * @property {number} telemetry_power - The power for the telemetry data.
  * @property {string} telemetry_rx_sign - The RX sign for the telemetry data.
  * @property {Date} telemetry_time - The time for the telemetry data.
+ * @property {string} telemetry_rx_loc - The RX location for the telemetry data.
  * @property {string} telemetry_tx_loc - The TX location for the telemetry data.
  * @property {string} telemetry_tx_sign - The TX sign for the telemetry data.
  */
@@ -26,6 +27,7 @@
  * @param {string} telemetry_rx_sign - The RX sign for the telemetry data.
  * @param {Date} telemetry_time - The time for the telemetry data.
  * @param {string} telemetry_tx_loc - The TX location for the telemetry data.
+ * @param {string} telemetry_rx_loc - The RX location for the telemetry data.
  * @param {string} telemetry_tx_sign - The TX sign for the telemetry data.
  * @returns {WsprLiveData} A new instance of WsprLiveData.
  */
@@ -39,6 +41,7 @@ export function createWsprLiveData(
     telemetry_rx_sign,
     telemetry_time,
     telemetry_tx_loc,
+    telemetry_rx_loc,
     telemetry_tx_sign
   ) {
     return {
@@ -51,6 +54,7 @@ export function createWsprLiveData(
       telemetry_rx_sign,
       telemetry_time,
       telemetry_tx_loc,
+      telemetry_rx_loc,
       telemetry_tx_sign,
     };
   }

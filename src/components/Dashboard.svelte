@@ -5,6 +5,7 @@
 	import { maidenheadToLatLng } from '../models/coordinates';
 	import { Chart, registerables } from 'chart.js';
 	import { celsiusToFahrenheit, knotsToMPH, metersToFeet } from '../helpers';
+	import SliderSwitch from './layout/SliderSwitch.svelte';
 
 	Chart.register(...registerables);
 
@@ -79,6 +80,8 @@
 	afterUpdate(async () => {
 		let coords;
 		const leaflet = await import('leaflet');
+
+		
 		if (latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare != null) {
 			// @ts-ignore
 			let latLang = maidenheadToLatLng(
@@ -89,10 +92,14 @@
 		} else {
 			coords = [50, -70];
 		}
+
+
 		// @ts-ignore
 		try {
 			map.setView(coords, 6);
 		} catch {}
+
+
 
 		if (latestBalloonTelemetry) {
 			const latestTelemetry = latestBalloonTelemetry[latestBalloonTelemetry.length - 1];
@@ -177,11 +184,11 @@
 
 			leaflet
 				.tileLayer(
-					'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-					{
-						attribution:
-							'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
-					}
+					'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	subdomains: 'abcd',
+	maxZoom: 20
+}
 				)
 				.addTo(map);
 
@@ -339,6 +346,14 @@
 
 <div class="flex flex-col mb-20">
 	<div id="map" class="border-2 border-solid border-gray-400 rounded-md" bind:this={mapElement} />
+	<div class="flex justify-end">
+
+		<div class="m-1 flex flex-col justify-end items-end">
+			<span>Show WSPR Spots</span>
+			<SliderSwitch/>
+		</div>
+	</div>
+	
 	<canvas class="max-h-32" bind:this={altitudeChart} />
 	<canvas class="max-h-32" bind:this={speedsChart} />
 	<canvas class="max-h-32" bind:this={powerChart} />

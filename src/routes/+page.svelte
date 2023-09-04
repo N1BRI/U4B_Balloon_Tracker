@@ -3,7 +3,8 @@
 	import '../app.css';
 	import BalloonConfigForm from '../components/BalloonConfigForm.svelte';
 	import Spinner from '../components/layout/Spinner.svelte';
-	import { balloonTelemetry } from '../stores';
+	import Map from '../components/Map.svelte';
+	import { balloonTelemetry, wsprSpots } from '../stores';
 	import { getLatestSpots, getTelemetryData } from '../queries';
 	import {
 		ThermometerIcon,
@@ -79,6 +80,14 @@
 		latestBalloonTelemetry = value;
 	});
 
+	/**
+	 * @type {Array<import('../models/wsprSpot').wsprSpot>}
+	 */
+	 let latestWsprSpots;
+	wsprSpots.subscribe((value) => {
+		latestWsprSpots = value;
+	});
+
 	onMount(async () => {
 		balloonTelemetry.set([]);
 		if (form?.success) {
@@ -118,6 +127,7 @@
 				class="flex flex-1 md:flex-1  flex-col border-solid bg-gray-100 rounded-md shadow-md py-3 md:mr-4 px-4 text-s"
 			>
 			<Dashboard/>
+			<Map latestBalloonTelemetry={latestBalloonTelemetry} latestWsprSpots={latestWsprSpots}/>
 			<!-- {#await latestSpotsPromise}
 			<center>
 				<Spinner />
@@ -165,7 +175,7 @@
 					</div>
 					<div class="flex py-1">
 						<MapPinIcon size="24" /><strong class="px-3"
-							>{latestBalloonTelemetry[0].gridSquare} - {strCoordinates(
+							>{latestBalloonTelemetry[latestBalloonTelemetry.length - 1].gridSquare.substring(0, 6)} - {strCoordinates(
 								maidenheadToLatLng(latestBalloonTelemetry[latestBalloonTelemetry.length - 1].gridSquare ?? '')
 							)}</strong
 						>

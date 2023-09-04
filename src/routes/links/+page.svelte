@@ -9,7 +9,6 @@
 			<li><a class="hover:underline text-xl" href="https://qrp-labs.com/" target="_blank">qrp-labs.com</a></li>
 			<li><a class="hover:underline text-xl" href="https://wspr.live/" target="_blank">wspr.live</a></li>
 			<li><a class="hover:underline text-xl" href="https://wsprnet.org/" target="_blank">wsprnet.org</a></li>
-			<li><a class="hover:underline text-xl" href="https://wspr.live/" target="_blank">wspr.live</a></li>
 		</ul>
 		
 	</div>

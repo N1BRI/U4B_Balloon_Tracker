@@ -37,6 +37,7 @@
 		"autoprefixer": "^10.4.15",
 		"chart.js": "^4.3.3",
 		"leaflet": "^1.9.4",
+		"leaflet-arc": "^1.0.2",
 		"mini.css": "^3.0.1",
 		"postcss": "^8.4.28",
 		"svelte-feather-icons": "^4.0.1",
