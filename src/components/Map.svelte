@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { maidenheadToLatLng } from '../models/coordinates';
 
@@ -36,12 +36,6 @@
 		var osm = leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			maxZoom: 19,
 			attribution: '© OpenStreetMap'
-		});
-
-		var osmHOT = leaflet.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-			maxZoom: 19,
-			attribution:
-				'© OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France'
 		});
 
 		var carto = leaflet.tileLayer(
@@ -100,7 +94,7 @@
 			
 			if (!isNaN(coordsRx.latitude) && !isNaN(coordsRx.longitude) &&
 			!isNaN(coordsTx.latitude) && !isNaN(coordsTx.longitude) ) {
-				telemSpots.push(leaflet.marker([coordsRx.latitude, coordsRx.longitude]).bindPopup(`<strong>Reporter:</strong> ${spot.rx_sign} <br><strong>SNR:</strong> ${spot.spot_snr} <br><strong>Time:</strong> ${spot.spot_time}`));
+				wsprSpots.push(leaflet.marker([coordsRx.latitude, coordsRx.longitude]).bindPopup(`<strong>Reporter:</strong> ${spot.rx_sign} <br><strong>SNR:</strong> ${spot.spot_snr} <br><strong>Time:</strong> ${spot.spot_time}`));
 				wsprSpots.push(
 					leaflet.Polyline.Arc([coordsRx.latitude, coordsRx.longitude], [coordsTx.latitude, coordsTx.longitude], {
 						color: 'rgb(20, 184, 166)',
@@ -119,27 +113,26 @@
 		});
 		balloonPath = leaflet.polyline(balloonTrackPoints);
 
-		var cc = leaflet.layerGroup(telemSpots);
-		var dd = leaflet.layerGroup(wsprSpots);
+		var spots = leaflet.layerGroup(wsprSpots);
 		var map = leaflet.map(mapElement, {
 			center: coords,
 			zoom: 6,
-			layers: [carto, balloonPath, cc, dd]
+			layers: [carto, balloonPath]
 		});
 
 		var baseMaps = {
 			Carto: carto,
-			OpenStreetMap: osm,
-			"<span style='color: red'>OpenStreetMap.HOT</span>": osmHOT
+			OpenStreetMap: osm
 		};
 
 		var overlayMaps = {
-			WSPRSpots: dd,
+			WSPRSpots: spots,
 			BalloonPath: balloonPath
 		};
 
 		leaflet.control.layers(baseMaps, overlayMaps).addTo(map);
 	});
+
 </script>
 
 <div id="map" bind:this={mapElement} />

@@ -78,26 +78,6 @@
 	});
 
 	afterUpdate(async () => {
-		let coords;
-		const leaflet = await import('leaflet');
-
-		
-		if (latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare != null) {
-			// @ts-ignore
-			let latLang = maidenheadToLatLng(
-				// @ts-ignore
-				latestBalloonTelemetry[latestBalloonTelemetry.length - 1]?.gridSquare
-			);
-			coords = [latLang.latitude, latLang.longitude];
-		} else {
-			coords = [50, -70];
-		}
-
-
-		// @ts-ignore
-		try {
-			map.setView(coords, 6);
-		} catch {}
 
 
 
@@ -157,50 +137,13 @@
 							temperatureChartInstance.update();
 						}
 					}
-					if (map && latestTelemetry.gridSquare && balloonPath) {
-						let coords = maidenheadToLatLng(latestTelemetry.gridSquare);
-						// @ts-ignore
-						balloonPath.addLatLng([coords.latitude, coords.longitude]);
-						balloonPath.addTo(map);
-					}
 				}
 			}
 		}
 	});
 
 	onMount(async () => {
-		if (browser) {
-			// @ts-ignore
-			const leaflet = await import('leaflet');
-			let coords;
-			if (latestBalloonTelemetry[0]?.gridSquare != null) {
-				let latLang = maidenheadToLatLng(latestBalloonTelemetry[0]?.gridSquare);
-				coords = [latLang.latitude, latLang.longitude];
-			} else {
-				coords = [50, -70];
-			}
-			console.log(coords);
-			map = leaflet.map(mapElement).setView(coords, 6);
-
-			leaflet
-				.tileLayer(
-					'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-	subdomains: 'abcd',
-	maxZoom: 20
-}
-				)
-				.addTo(map);
-
-			latestBalloonTelemetry.forEach((record) => {
-				if (record.gridSquare) {
-					let coords = maidenheadToLatLng(record.gridSquare);
-					balloonTrackPoints.push([coords.latitude, coords.longitude]);
-				}
-			});
-			balloonPath = leaflet.polyline(balloonTrackPoints);
-			balloonPath.addTo(map);
-		}
+			
 
 		if (altitudeChart) {
 			altitudeChartInstance = new Chart(altitudeChart, {
@@ -332,28 +275,13 @@
 					}
 				}
 			}
+			
 		});
 	});
 
-	onDestroy(async () => {
-		if (map) {
-			console.log('Unloading Leaflet map.');
-			map.remove();
-		}
-		//altitudeChartInstance.destroy();
-	});
 </script>
 
 <div class="flex flex-col mb-20">
-	<div id="map" class="border-2 border-solid border-gray-400 rounded-md" bind:this={mapElement} />
-	<div class="flex justify-end">
-
-		<div class="m-1 flex flex-col justify-end items-end">
-			<span>Show WSPR Spots</span>
-			<SliderSwitch/>
-		</div>
-	</div>
-	
 	<canvas class="max-h-32" bind:this={altitudeChart} />
 	<canvas class="max-h-32" bind:this={speedsChart} />
 	<canvas class="max-h-32" bind:this={powerChart} />
@@ -361,11 +289,3 @@
 	<!-- <button on:click={addDataTest}>Add d</button> -->
 </div>
 
-<style>
-	@import 'leaflet/dist/leaflet.css';
-
-	#map {
-		height: 500px;
-		
-	}
-</style>

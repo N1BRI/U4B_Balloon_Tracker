@@ -3,9 +3,9 @@
 	import '../app.css';
 	import BalloonConfigForm from '../components/BalloonConfigForm.svelte';
 	import Spinner from '../components/layout/Spinner.svelte';
-	import Map from '../components/Map.svelte';
+	import Map from '../components/Map.svelte'
 	import { balloonTelemetry, wsprSpots } from '../stores';
-	import { getLatestSpots, getTelemetryData } from '../queries';
+	import { getTelemetryData } from '../queries';
 	import {
 		ThermometerIcon,
 		BatteryChargingIcon,
@@ -18,6 +18,7 @@
 	import { celsiusToFahrenheit, knotsToMPH, metersToFeet } from '../helpers';
 	import { maidenheadToLatLng, strCoordinates } from '../models/coordinates';
 	import Dashboard from '../components/Dashboard.svelte';
+	import Graph from '../components/Graph.svelte';
 
 	
 	export let form;
@@ -126,25 +127,8 @@
 			<div
 				class="flex flex-1 md:flex-1  flex-col border-solid bg-gray-100 rounded-md shadow-md py-3 md:mr-4 px-4 text-s"
 			>
-			<Dashboard/>
 			<Map latestBalloonTelemetry={latestBalloonTelemetry} latestWsprSpots={latestWsprSpots}/>
-			<!-- {#await latestSpotsPromise}
-			<center>
-				<Spinner />
-				<p>...fetching latest spots</p>
-			</center>
-				
-			{:then spots} 
-				{#each spots as spot}
-					<span>{spot.rx_sign} </span>
-					<span>{spot.spot_power} </span>
-					<span>{spot.spot_rx_loc} </span>
-					<span>{spot.spot_snr} </span>
-					<span>{spot.spot_time} </span>
-					<span>{spot.spot_tx_loc} </span>
-				{/each}
-				
-			{/await} -->
+			<Dashboard/>
 			</div>
 			<div class="flex flex-1 md:flex-none md:w-70 md:flex-2 border-solid mb-6 md:mb-0 bg-gray-100 rounded-md shadow-md pb-4 px-4 text-s self-start">
 				<div class="max-h-fit">
