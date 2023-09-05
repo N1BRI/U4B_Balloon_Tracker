@@ -4,7 +4,7 @@
 
 <div class="flex flex-wrap justify-center mb-20">
 	<div class="flex items-center flex-col px-2">
-		<div class="border-solid bg-gray-100 rounded-md shadow-md flex flex-wrap justify-center py-8 md:m-20">
+		<div class="border-solid bg-gray-100 rounded-md shadow-md flex flex-wrap justify-center mt-5 mx-3 py-8 md:m-20">
 			<h1 class="mb-3 mx-3 text-2xl font-bold">
 				About The W1NRG High Altitude Balloon Project & U4B.live
 			</h1>
