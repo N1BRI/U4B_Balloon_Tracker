@@ -52,7 +52,7 @@ export const actions = {
  */
 function formDataToBalloonConfigFormData(formData) {
     return {
-        callsign: formData.get('callsign'),
+        callsign: formData.get('callsign').toUpperCase(),
         slotId: parseInt(formData.get('slotId')),
         telCallFormat: formData.get('telCallFormat'),
         startDate: new Date(formData.get('startDate'))

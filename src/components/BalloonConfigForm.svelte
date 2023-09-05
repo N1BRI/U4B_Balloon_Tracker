@@ -51,7 +51,7 @@
 				{/if}
 			</div>
 			<div class="pt-2 flex flex-col flex-1 px-2">
-				<label for="callsign">Telemetry Call Format</label>
+				<label for="callsign">Telemetry Callsign Format</label>
 				<input 
 					value={form?.formData.telCallFormat ?? ''}
 					type="text"
