@@ -110,28 +110,36 @@ export async function getTelemetryData(configData, isLimitedQuery = false) {
         if (json.data.length > 0) {
             json.data.forEach(
                 (/** @type {import("./models/wsprLiveData").WsprLiveData} */ record) => {
-                    let newTelemetry = createTelemetry();
-                    let decodedTelemetry = decodeTelemetry(record);
-                    newTelemetry.telemetryCallsign = record.telemetry_tx_sign;
-                    newTelemetry.temperature = decodedTelemetry.temperature;
-                    newTelemetry.altitude = decodedTelemetry.altitude;
-                    newTelemetry.battery = decodedTelemetry.battery;
-                    newTelemetry.speed = decodedTelemetry.speed;
-                    newTelemetry.gpsStatus = decodedTelemetry.gpsStatus;
-                    newTelemetry.satsStatus = decodedTelemetry.satsStatus;
-                    newTelemetry.gridSquare = record.standard_tx_loc + decodedTelemetry.telemetrySubsquare;
-                    newTelemetry.lastReportedBy = decodedTelemetry.lastReportedBy;
-                    newTelemetry.lastUpdated = decodedTelemetry.lastUpdated;
-                    newTelemetry.telemetryRxLocation = record.telemetry_rx_loc
 
-                   
-                    let lastTelemetryTime = latestBalloonTelemetry[0]?.lastUpdated;
-                    if (!isLimitedQuery) {
-                        balloonTelemetry.update((telemetry) => [...telemetry, newTelemetry]);
+                    try {
+                        let newTelemetry = createTelemetry();
+                        let decodedTelemetry;
+                        decodedTelemetry = decodeTelemetry(record);
+                        newTelemetry.telemetryCallsign = record.telemetry_tx_sign;
+                        newTelemetry.temperature = decodedTelemetry.temperature;
+                        newTelemetry.altitude = decodedTelemetry.altitude;
+                        newTelemetry.battery = decodedTelemetry.battery;
+                        newTelemetry.speed = decodedTelemetry.speed;
+                        newTelemetry.gpsStatus = decodedTelemetry.gpsStatus;
+                        newTelemetry.satsStatus = decodedTelemetry.satsStatus;
+                        newTelemetry.gridSquare = record.standard_tx_loc + decodedTelemetry.telemetrySubsquare;
+                        newTelemetry.lastReportedBy = decodedTelemetry.lastReportedBy;
+                        newTelemetry.lastUpdated = decodedTelemetry.lastUpdated;
+                        newTelemetry.telemetryRxLocation = record.telemetry_rx_loc
+
+
+                        let lastTelemetryTime = latestBalloonTelemetry[0]?.lastUpdated;
+                        if (!isLimitedQuery) {
+                            balloonTelemetry.update((telemetry) => [...telemetry, newTelemetry]);
+                        }
+                        else if (lastTelemetryTime != null && lastTelemetryTime < newTelemetry.lastUpdated) {
+                            balloonTelemetry.update((telemetry) => [...telemetry, newTelemetry]);
+                        }
                     }
-                    else if (lastTelemetryTime != null && lastTelemetryTime < newTelemetry.lastUpdated) {
-                        balloonTelemetry.update((telemetry) => [...telemetry, newTelemetry]);
+                    catch (error) {
+                        console.log(error);
                     }
+
                 }
 
 

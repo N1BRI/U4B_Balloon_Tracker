@@ -5,7 +5,7 @@
  */
 export function maidenheadToLatLng(maidenhead) {
   if (maidenhead.length !== 4 && maidenhead.length !== 6) {
-    console.log(maidenhead)
+    maidenhead = maidenhead.substring(0,5);
   }
 
   const lonIndex1 = maidenhead.charCodeAt(0) - 65;

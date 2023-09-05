@@ -5,7 +5,7 @@
 
 <center class="mt-6 text-xl">
 	<div>
-		<h1>Sorry... never heard of it</h1>
+		<h1>Sorry... looks like there was an issue</h1>
 		{#if $page?.error}
 			<div class="mt-4 p-4 border-y-2">
 				{#if $page?.status}

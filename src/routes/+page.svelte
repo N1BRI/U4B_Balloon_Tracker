@@ -119,16 +119,16 @@
 	</center>
 {:then}
 	{#if latestBalloonTelemetry.length > 0}
-		<div class="flex px-1 mt-4 flex-wrap-reverse md:flex-nowrap md:px-7">
+		<div class="flex px-1 mt-4 flex-wrap-reverse justify-center md:flex-nowrap md:px-7">
 			<div
-				class="flex flex-1 md:flex-1 flex-col border-solid bg-gray-100 rounded-md shadow-md py-3 md:mr-4 px-4 text-s"
+				class="flex flex-1 w-full md:flex-1 flex-col border-solid bg-gray-100 rounded-md shadow-md py-3 md:mr-4 px-4 text-s"
 			>
 				<Map {latestBalloonTelemetry} {latestWsprSpots} />
 				<Dashboard />
 			</div>
-			<div class="flex flex-col">
+			<div class="flex flex-col ">
 				<div
-					class="flex flex-1 md:flex-none md:w-70 md:flex-2 border-solid mb-6 md:mb-0 bg-gray-100 rounded-md shadow-md pb-4 px-4 text-s self-start"
+					class="flex flex-1 md:flex-none md:w-70 md:flex-2 border-solid mb-2 md:mb-0 bg-gray-100 rounded-md shadow-md pb-4 px-4 text-s self-start"
 				>
 					<div class="max-h-fit">
 						<h1 class="text-2xl my-2">Lastest Balloon Status</h1>
@@ -199,13 +199,17 @@
 					 border-solid mb-6 md:mb-0 bg-gray-100 rounded-md shadow-md pb-4 px-4 text-s self-start"
 				>
 					<h1 class="text-lg">Unique WSPR Spots</h1>
-					<h1 class="text-2xl w-10/12 bg-gray-300 text-center font-bold rounded-md border-2 border-transparent flex-stretch">{latestWsprSpots.length}</h1>
+					<h1
+						class="text-2xl w-10/12 bg-gray-300 text-center font-bold rounded-md border-2 border-transparent flex-stretch"
+					>
+						{latestWsprSpots.length}
+					</h1>
 				</div>
 			</div>
 		</div>
 	{/if}
 {:catch error}
-	<p style="color: red">{error.message}</p>
+	<p style="color: red">There was an error fetching telemetry data</p>
 {/await}
 
 <style>
