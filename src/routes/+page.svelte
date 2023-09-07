@@ -93,7 +93,6 @@
 		if (form?.success) {
 			configData = form.formData;
 			latestTelemetryPromise = getTelemetryData(configData, historicalQueryRan);
-			//latestSpotsPromise = getLatestSpots(configData.callsign, configData.startDate);
 			balloonConfigLoaded = true;
 			historicalQueryRan = true;
 			startTelemetryTimer();
@@ -204,6 +203,7 @@
 					>
 						{latestWsprSpots.length}
 					</h1>
+					
 				</div>
 			</div>
 		</div>

@@ -155,7 +155,12 @@ export async function getTelemetryData(configData, isLimitedQuery = false) {
 * @param {Date | null } lastUpdatedTime
 */
 export function buildSpotsQuery(callsign, lastUpdatedTime) {
-    if (lastUpdatedTime !== null) {
+    if (lastUpdatedTime === null) {
+        lastUpdatedTime = new Date();
+    }
+    else {
+        lastUpdatedTime = new Date(lastUpdatedTime)
+    }
         let lastUpdateString = format(lastUpdatedTime, 'yyyy-MM-dd HH:mm:ss')
 
         return encodeURIComponent(`SELECT rx_sign, MAX(time) AS spot_time, MAX(power) as spot_power, MAX(snr) spot_snr, max(rx_loc) as spot_rx_loc, max(tx_loc) as spot_tx_loc
@@ -164,7 +169,7 @@ export function buildSpotsQuery(callsign, lastUpdatedTime) {
             AND tx_sign = '${callsign}'
         GROUP BY rx_sign
         order by spot_time desc`)
-    }
+    
 }
 
 /**
