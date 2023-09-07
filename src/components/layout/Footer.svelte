@@ -4,7 +4,7 @@
 			><strong>Version: Test 1.0 </strong>
 			<small
 				><strong>
-					<div class="ml-2 text-emerald-600">
+					<div class="ml-2 text-teal-500">
 						<a href="https://github.com/N1BRI/U4B_Balloon_Tracker/issues" class="flex items-center" target="_blank">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"

@@ -3,11 +3,11 @@
 </script>
 
 <div
-	class="border-solid bg-gray-100 rounded-md shadow-md flex-col flex flex-wrap justify-center align-middle mt-5 mx-3 py-8 md:m-20"
+	class="border-solid bg-gray-100 rounded-md shadow-md flex-col flex flex-wrap justify-center align-middle mt-5 mx-3 py-8 md:m-20 mb-20"
 >
 	<div class="flex flex-col items-center">
-		<h1 class="text-2xl px-3">Please visit and support the following</h1>
-		<h1 class="text-2xl px-3 mb-3">u4b.live would not be possible without 'em!</h1>
+		<h1 class="text-2xl px-3 text-center">Please visit and support the following</h1>
+		<h1 class="text-2xl px-3 mb-3 text-center">u4b.live would not be possible without 'em!</h1>
 	</div>
 	<div class="flex flex-col items-center">
 		<ul class="flex flex-col items-center">
@@ -42,8 +42,8 @@
 				>
 			</li>
 			<li>
-				<a class="hover:underline text-xl" href="https://www.w1nrg.com/website/index.html" target="_blank"
-					>Meriden Amateur Radio Club/Wallingford Radio Group</a
+				<a class="hover:underline text-xl " href="https://www.w1nrg.com/website/index.html"  target="_blank"
+					>M.A.R.C./W.A.R.G.</a
 				>
 			</li>
 		</ul>
