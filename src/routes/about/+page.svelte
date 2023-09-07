@@ -53,7 +53,7 @@
 			</p>
 
 			<div>
-				<p>
+				<p class="p-4">
 					u4b.live was created to suit the needs of this project, but we hope that others might find
 					it useful. The site will remain active for as long as QRP-Labs is making the boards.
 				</p>
