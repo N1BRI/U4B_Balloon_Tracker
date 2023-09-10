@@ -192,10 +192,15 @@ export async function getLatestSpots(callsign, lastUpdatedTime) {
                 spot.spot_snr = record.spot_snr;
                 spot.spot_time = record.spot_time;
                 spot.spot_tx_loc = record.spot_tx_loc;
-                wsprSpots.update((spots) => [...spots, spot]);
 
-            }
-            )
+                wsprSpots.update(spots => {
+                    let matchIndex = latestWsprSpots.findIndex(s => s.rx_sign === spot.rx_sign);
+                    if (matchIndex === -1) {
+                        return [...spots, spot];
+                    }
+                    return [...spots];
+                });
+            });
         }
 
     }
